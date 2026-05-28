@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RantauFlow Login</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Inter,Arial,sans-serif;
+}
+
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Arial,sans-serif;
+
+background:
+radial-gradient(circle at 80% 30%, rgba(120,70,255,.22), transparent 30%),
+linear-gradient(135deg,#120026,#2b006f);
+}
+
+
+/* GLASS CARD */
+
+.glass-card{
+
+width:430px;
+padding:60px;
+border-radius:36px;
+
+background:rgba(30,10,80,.38);
+
+backdrop-filter:blur(28px);
+-webkit-backdrop-filter:blur(28px);
+
+border:1px solid rgba(255,255,255,.28);
+
+box-shadow:
+0 8px 18px rgba(170,120,255,.25),
+inset 0 0 30px rgba(255,255,255,.03);
+
+position:relative;
+overflow:hidden;
+color:white;
+transform:translateY(-20px);
+}
+
+
+/* floating glossy streaks */
+
+.gloss1{
+position:absolute;
+top:-60px;
+left:-30px;
+width:500px;
+height:140px;
+background:rgba(255,255,255,.06);
+transform:rotate(-25deg);
+filter:blur(10px);
+}
+
+.gloss2{
+position:absolute;
+bottom:-70px;
+right:-50px;
+width:320px;
+height:150px;
+background:rgba(255,255,255,.05);
+transform:rotate(-28deg);
+filter:blur(12px);
+}
+
+
+
+/* LOGO */
+
+.logo-wrap{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+width:100%;
+margin-bottom:28px;
+}
+
+.mark{
+display:flex;
+justify-content:center;
+align-items:flex-end;
+gap:9px;
+margin:0 auto 16px auto;
+height:54px;
+}
+
+.line1{
+width:11px;
+height:28px;
+border-radius:20px;
+background:#b892ff;
+transform:rotate(-38deg);
+box-shadow:0 0 18px rgba(185,146,255,.45);
+}
+
+.line2{
+width:11px;
+height:42px;
+border-radius:20px;
+background:#dcc5ff;
+transform:rotate(-38deg);
+box-shadow:0 0 22px rgba(220,197,255,.5);
+}
+
+.brand{
+text-align:center;
+width:100%;
+font-size:34px;
+font-weight:700;
+margin-bottom:26px;
+}
+
+
+
+/* TEXT */
+
+h2{
+font-size:30px;
+margin-bottom:10px;
+}
+
+.sub{
+opacity:.78;
+margin-bottom:34px;
+letter-spacing:.3px;
+font-size:15px;
+opacity:.82;
+}
+
+
+
+/* INPUT */
+
+input{
+width:100%;
+padding:18px;
+margin-top:18px;
+
+background:transparent;
+
+border:2px solid rgba(255,255,255,.78);
+
+border-radius:14px;
+
+color:white;
+font-size:16px;
+}
+
+input::placeholder{
+color:rgba(255,255,255,.65);
+}
+
+input:focus{
+outline:none;
+box-shadow:
+0 8px 18px rgba(170,120,255,.25),
+inset 0 0 14px rgba(255,255,255,.08);
+}
+
+
+
+/* BUTTON */
+
+button{
+width:100%;
+margin-top:24px;
+padding:16px;
+
+border:none;
+border-radius:15px;
+
+font-size:22px;
+font-weight:700;
+color:white;
+
+background:linear-gradient(
+180deg,
+#c193ff,
+#9b67ff
+);
+
+border:1px solid rgba(255,255,255,.35);
+
+box-shadow:
+0 8px 18px rgba(170,120,255,.25);
+}
+
+button:hover{
+transform:translateY(-1px);
+}
+
+
+
+/* SIGNUP */
+
+.signup{
+margin-top:30px;
+text-align:center;
+opacity:.86;
+font-size:18px;
+}
+
+.signup a{
+color:white;
+font-weight:700;
+text-decoration:none;
+}
+
+
+
+/* MESSAGE */
+
+#msg{
+margin-top:16px;
+text-align:center;
+}
+
+</style>
+</head>
+
+
+
+<body>
+
+<div class="glass-card">
+
+<div class="gloss1"></div>
+<div class="gloss2"></div>
+
+
+<div class="logo-wrap">
+
+<div class="mark">
+<span class="line1"></span>
+<span class="line2"></span>
+</div>
+
+<div class="brand">
+RantauFlow
+</div>
+
+</div>
+
+
+
+<h2>Welcome Back</h2>
+
+<p class="sub">
+Track money. Avoid chaos!
+</p>
+
+
+
+<input
+id="email"
+placeholder="Email address"
+/>
+
+
+<input
+id="password"
+type="password"
+placeholder="Password"
+/>
+
+
+<button onclick="loginUser()">
+Login
+</button>
+
+
+
+<div class="signup">
+New here?
+<a href="#" onclick="registerUser()">
+Sign Up
+</a>
+</div>
+
+<p id="msg"></p>
+
+
+</div>
+
+
+
+
+<script>
+
+async function registerUser(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+const res=await fetch(
+"http://localhost:3001/register",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email,
+password
+})
+}
+);
+
+const data=await res.json();
+
+document.getElementById("msg").innerText=
+data.success?
+"Account created":
+"Register failed";
+
+}
+
+
+
+async function loginUser(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+const res=await fetch(
+"http://localhost:3001/login",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email,
+password
+})
+}
+);
+
+const data=await res.json();
+
+if(data.success){
+
+localStorage.setItem("userId", data.userId);
+
+window.location="index.html";
+
+}else{
+
+document.getElementById("msg").innerText=
+"Wrong credentials";
+
+}
+
+}
+
+</script>
+
+
+</body>
+</html>
