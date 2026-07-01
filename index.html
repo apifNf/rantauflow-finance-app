@@ -2,7 +2,11 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PWA & MOBILE RESPONSIVE TAG Wajib -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#070B14">
+  <link rel="manifest" href="/manifest.json">
+  
   <title>RantauFlow Pro Dashboard</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,7 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -37,18 +40,17 @@
 
     /* ========================================================
     CSS KHUSUS PRINT - INI KUNCI 100% FIX-NYA 
-    ========================================================
-    */
+    ======================================================== */
     body.is-printing {
-      background-color: #ffffff !important; /* Mencegah halaman kosong jadi hitam */
+      background-color: #ffffff !important;
       margin: 0 !important;
       padding: 0 !important;
-      min-height: auto !important; /* Mencegah halaman ekstra */
+      min-height: auto !important;
       display: block !important;
     }
     body.is-printing #mainWrapper {
       width: 1000px !important;
-      margin: 0 !important; /* Memaksa ke kiri agar tidak terpotong (Cropping fix) */
+      margin: 0 !important;
       padding: 0 !important;
       background: #ffffff !important;
     }
@@ -58,12 +60,11 @@
       margin: 0 !important;
       min-height: auto !important;
     }
-    body.is-printing .modal-overlay {
+    body.is-printing .modal-overlay, body.is-printing #limitBanner {
       display: none !important;
     }
     /* ======================================================== */
 
-    /* Wrapper utama (Default posisi di tengah layar) */
     #mainWrapper {
       width: 100%;
       display: flex;
@@ -86,8 +87,7 @@
       border: 1px solid var(--glass-border); border-radius: 16px; padding: 24px;
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .glass-card:hover { border-color: rgba(255, 255, 255, 0.12); }
-
+    
     h1, h2, h3, h4 { margin: 0; font-weight: 600; }
     h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;}
     
@@ -97,26 +97,30 @@
     .premium-input {
       flex: 1; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--glass-border);
       background: rgba(0,0,0,0.2); color: white; font-family: inherit; outline: none; transition: border 0.3s ease;
+      font-size: 15px;
     }
     .premium-input:focus { border-color: var(--accent-blue); }
+    
+    /* Custom style dropdown dompet */
+    select.premium-input {
+      appearance: none;
+      background: rgba(0,0,0,0.3) url('data:image/svg+xml;utf8,<svg fill="%2394A3B8" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center;
+      cursor: pointer;
+    }
 
     .btn {
       padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
       font-family: inherit; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     }
     .btn-primary { background: var(--text-main); color: var(--bg-dark); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
     .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-main); }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); }
     .btn-accent { background: var(--accent-blue); color: var(--bg-dark); }
-    .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56,189,248,0.2); }
-    .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .chip {
       background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted);
       padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s ease;
     }
-    .chip:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);
@@ -130,6 +134,43 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+    /* ========================================================
+    MOBILE-FIRST CSS (Media Queries)
+    ======================================================== */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 0;
+        font-size: 16px; 
+      }
+      #dashboardView {
+        padding: 20px 15px;
+      }
+      .flex-row {
+        flex-direction: column; /* Mengubah kolom jadi baris vertikal */
+        gap: 16px;
+      }
+      .glass-card {
+        padding: 20px;
+        width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* Tombol dan Input menyesuaikan ukuran jempol */
+      .btn, .premium-input, select {
+        width: 100% !important;
+        min-height: 52px;
+        font-size: 16px; /* Mencegah auto-zoom di iOS Safari */
+      }
+      .action-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      .header-title h1 {
+        font-size: 18px !important;
+      }
+      #balance { font-size: 36px !important; }
+      #chatBox { height: 200px !important; }
+    }
   </style>
 </head>
 <body>
@@ -137,33 +178,35 @@
 <div id="mainWrapper">
   
   <div id="dashboardView">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;" data-html2canvas-ignore>
-      <div style="display:flex; align-items:center;">
-        <div style="width:36px; height:36px; border-radius:10px; background:rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); display:flex; align-items:center; justify-content:center; color:var(--accent-green); font-weight:700; margin-right:12px; font-size:14px;">
-          RF
-        </div>
-        <h1 style="color:#ffffff; font-size: 22px; letter-spacing:-0.5px;">RantauFlow</h1>
-        <span id="proBadge" style="margin-left:12px; padding:4px 10px; background:linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); border:1px solid rgba(255,255,255,0.15); border-radius:8px; font-size:11px; font-weight:700; color:#fff; letter-spacing:1px; display:none;">PRO</span>
-      </div>
+    
+    <!-- Banner Limit Transaksi (Muncul Otomatis untuk Free User) -->
+    <div id="limitBanner" style="display: none; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--accent-red); padding: 12px 16px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; line-height: 1.5;">
+      ⚠️ Sisa kuota catatan gratis bulan ini: <strong id="quotaCount">--</strong> transaksi. <br>
+      <a href="#" onclick="checkPremiumAccess('limit')" style="color: var(--accent-blue); text-decoration: underline; font-weight: bold; margin-left: 4px; display: inline-block; margin-top: 4px;">Upgrade Pro (Rp 9.900)</a>
+    </div>
 
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;" data-html2canvas-ignore>
+      <div class="header-title" style="display:flex; align-items:center;">
+        <div style="width:36px; height:36px; border-radius:10px; background:rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); display:flex; align-items:center; justify-content:center; color:var(--accent-green); font-weight:700; margin-right:12px; font-size:14px;">RF</div>
+        <h1 style="color:#ffffff; font-size: 22px; letter-spacing:-0.5px;">RantauFlow</h1>
+        <span id="proBadge" style="margin-left:12px; padding:4px 10px; background:linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); border:1px solid rgba(255,255,255,0.15); border-radius:8px; font-size:11px; font-weight:700; color:#fff; display:none;">PRO</span>
+      </div>
       <div style="display:flex; align-items:center; gap: 10px;">
         <div style="width:8px; height:8px; background:var(--accent-green); border-radius:50%; box-shadow: 0 0 10px var(--accent-green);"></div>
-        <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--text-muted);">
-          AN
-        </div>
+        <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--text-muted);">AN</div>
       </div>
     </div>
 
+    <!-- Top Cards (Saldo & Income/Expense) -->
     <div class="flex-row" style="align-items: stretch;">
       <div class="glass-card" style="flex:1.2; position: relative; overflow: hidden;">
         <div style="position:absolute; top:-50px; left:-50px; width:150px; height:150px; background:var(--accent-blue); filter:blur(80px); opacity:0.15; border-radius:50%;"></div>
-        <h3>Total Cash</h3>
+        <h3>Total Saldo (Semua Dompet)</h3>
         <h1 id="balance" style="font-size:42px; font-weight:700; margin:8px 0 16px 0; color:var(--text-main); letter-spacing:-1px;"></h1>
-        
         <div style="height: 60px; margin-bottom: 10px;">
           <canvas id="cashTrend"></canvas>
         </div>
-
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; font-size:14px;">
           <span id="savingRate" style="color:var(--text-muted);">Saving Rate --</span>
           <span id="cashStatus" style="background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.2); color:var(--accent-green); padding:4px 12px; border-radius:12px; font-size:12px; font-weight:500;">--</span>
@@ -177,7 +220,6 @@
           </div>
           <h2 id="income" style="color:var(--accent-green); font-size:28px; font-weight:500; letter-spacing:-0.5px;"></h2>
         </div>
-
         <div class="glass-card" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
            <div style="display:flex; justify-content:space-between;">
             <h3>Expense</h3><span style="color:var(--accent-red);">↘</span>
@@ -187,6 +229,7 @@
       </div>
     </div>
 
+    <!-- AI Coach & Health Score -->
     <div class="flex-row">
       <div class="glass-card" style="flex:2;">
         <h3>✨ AI Spending Coach</h3>
@@ -200,15 +243,29 @@
       </div>
     </div>
 
+    <!-- Input Transaksi / Chat AI Area -->
     <div class="flex-row" data-html2canvas-ignore>
       <div class="glass-card" style="flex:2;">
         <h3>Add Transaction / Ask AI</h3>
+        
         <div id="chatBox" style="height:250px; overflow-y:auto; background:rgba(0,0,0,0.15); border-radius:12px; padding:16px; margin-bottom:16px; display:flex; flex-direction:column; gap:12px; border:1px solid var(--glass-border);"></div>
-        <div style="display:flex; gap:12px;">
-          <input id="textInput" class="premium-input" placeholder="contoh: makan 20k atau roast pengeluaran gue">
-          <button onclick="sendData()" class="btn btn-primary">Kirim</button>
-          <button onclick="askAI()" class="btn btn-outline">Tanya AI</button>
+        
+        <!-- Input & Dompet Selector -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <!-- Dompet Selector (PRO Feature UI) -->
+          <select id="walletSelect" class="premium-input" onchange="handleWalletChange()">
+            <option value="utama">👛 Dompet Utama (Cash)</option>
+            <option value="new">🔒 + Tambah Dompet/Rekening (PRO)</option>
+          </select>
+          
+          <div class="action-buttons" style="display:flex; gap:12px;">
+            <input id="textInput" class="premium-input" placeholder="contoh: makan 20k atau roast gue">
+            <button id="sendBtn" onclick="sendData()" class="btn btn-primary">Kirim</button>
+            <button id="aiBtn" onclick="askAI()" class="btn btn-outline">Tanya AI</button>
+          </div>
         </div>
+
+        <!-- Quick Chips -->
         <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
           <button onclick="quickAdd('makan 20k')" class="chip">+ Makan 20k</button>
           <button onclick="quickAdd('grab 30k')" class="chip">+ Grab 30k</button>
@@ -217,9 +274,13 @@
         </div>
       </div>
 
+      <!-- Categories & History -->
       <div class="flex-col" style="flex:1;">
         <div class="glass-card">
-          <h3>Top Category</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0;">Top Category</h3>
+            <button onclick="checkPremiumAccess('kategori')" class="chip" style="padding: 4px 10px; font-size: 11px; margin:0;">🔒 Kategori Baru</button>
+          </div>
           <p id="topCategory" style="font-size:18px; font-weight:500; margin:0;"></p>
         </div>
         <div class="glass-card" style="flex:1; display:flex; flex-direction:column;">
@@ -229,15 +290,12 @@
       </div>
     </div>
 
+    <!-- Export & Reports Area -->
     <div class="flex-row" style="align-items: center; justify-content: space-between; margin-top: 10px;" data-html2canvas-ignore>
-      <h3 style="margin: 0;">Laporan Finansial</h3>
-      <div style="display: flex; gap: 12px;">
-        <button onclick="checkPremiumAccess('csv')" class="btn btn-outline" style="padding: 10px 18px; font-size: 13px;">
-          📊 Export CSV
-        </button>
-        <button id="pdfBtn" onclick="checkPremiumAccess('pdf')" class="btn btn-accent" style="padding: 10px 18px; font-size: 13px;">
-          📄 Download Bank Statement (PDF)
-        </button>
+      <h3 style="margin: 0; padding-left:16px;">Laporan Finansial</h3>
+      <div class="action-buttons" style="display: flex; gap: 12px; padding: 0 16px;">
+        <button onclick="checkPremiumAccess('csv')" class="btn btn-outline" style="padding: 10px 18px; font-size: 13px;">📊 Export CSV</button>
+        <button id="pdfBtn" onclick="checkPremiumAccess('pdf')" class="btn btn-accent" style="padding: 10px 18px; font-size: 13px;">📄 Unduh e-Statement</button>
       </div>
     </div>
 
@@ -248,16 +306,18 @@
       </div>
     </div>
   </div>
+</div> 
 
-</div> <div id="paywallModal" class="modal-overlay" data-html2canvas-ignore>
+<!-- DYNAMIC PAYWALL MODAL -->
+<div id="paywallModal" class="modal-overlay" data-html2canvas-ignore>
   <div class="modal-content glass-card">
     <div style="width:50px; height:50px; border-radius:50%; background:rgba(56, 189, 248, 0.1); color:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-size:24px; margin: 0 auto 16px auto;">🔒</div>
-    <h2 style="color: var(--text-main); margin-bottom: 12px; letter-spacing: -0.5px;">Fitur Terkunci</h2>
-    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6;">
-      Laporan PDF e-Statement & Export CSV adalah fitur khusus <b>RantauFlow PRO</b>.
+    <h2 style="color: var(--text-main); margin-bottom: 12px; letter-spacing: -0.5px;">Upgrade ke PRO</h2>
+    <p id="paywallText" style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6;">
+      Fitur ini khusus pengguna RantauFlow PRO.
     </p>
     <div class="flex-col" style="gap: 10px;">
-      <button class="btn btn-accent" style="width: 100%;" onclick="alert('Redirect ke halaman pembayaran A-Tech Labs...')">Upgrade ke PRO</button>
+      <button class="btn btn-accent" style="width: 100%;" onclick="alert('System Midtrans Checkout akan diintegrasikan di sini!')">Upgrade Sekarang (Rp 9.900)</button>
       <button onclick="closeModal()" class="btn btn-outline" style="width: 100%;">Mungkin Nanti</button>
     </div>
   </div>
@@ -269,25 +329,57 @@ window.summaryData = {};
 
 async function loadData() {
   try {
-    const isPro = localStorage.getItem("isPro");
-    if (isPro === "1") document.getElementById("proBadge").style.display = "inline-block";
+    const userId = localStorage.getItem("userId");
+    // Jika tidak ada user ID (belum login), tendang ke halaman login
+    if (!userId) {
+      window.location = "login.html";
+      return;
+    }
 
-    const insight = await fetch("/insight").then(r=>r.json());
+    const isPro = localStorage.getItem("isPro");
+    if (isPro === "1") {
+      document.getElementById("proBadge").style.display = "inline-block";
+      document.getElementById("limitBanner").style.display = "none";
+    }
+
+    // FIX: Sisipkan ?userId=${userId} ke setiap URL fetch
+    const insight = await fetch(`/insight?userId=${userId}`).then(r=>r.json());
     document.getElementById("insight").innerHTML = insight.insight.join("<br>");
 
-    const summary = await fetch("/summary").then(r=>r.json());
+    const summary = await fetch(`/summary?userId=${userId}`).then(r=>r.json());
     window.rawTransactions = summary.transactions || [];
     window.summaryData = summary; 
 
+    // Fitur Limit 30 Transaksi (Free User)
+    if (isPro !== "1") {
+      const txCount = window.rawTransactions.length;
+      const maxFree = 30;
+      let sisa = maxFree - txCount;
+      if(sisa < 0) sisa = 0;
+      
+      document.getElementById("limitBanner").style.display = "block";
+      document.getElementById("quotaCount").innerText = sisa;
+      
+      if(sisa === 0) {
+        document.getElementById("textInput").disabled = true;
+        document.getElementById("sendBtn").disabled = true;
+        document.getElementById("textInput").placeholder = "Kuota Habis. Silakan Upgrade PRO 🔒";
+      }
+    }
+
     const historyBox = document.getElementById("history");
     historyBox.innerHTML = "";
-    summary.recent.forEach(tx => {
-      historyBox.innerHTML += `
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;">
-        <span style="color:var(--text-main); text-transform:capitalize;">${tx.category}</span>
-        <span style="color:var(--text-muted); font-family:monospace;">- Rp${tx.amount.toLocaleString("id-ID")}</span>
-      </div>`;
-    });
+    if (summary.recent.length === 0) {
+       historyBox.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 14px;">Belum ada transaksi 💸</div>`;
+    } else {
+      summary.recent.forEach(tx => {
+        historyBox.innerHTML += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;">
+          <span style="color:var(--text-main); text-transform:capitalize;">${tx.category}</span>
+          <span style="color:var(--text-muted); font-family:monospace;">- Rp${tx.amount.toLocaleString("id-ID")}</span>
+        </div>`;
+      });
+    }
 
     if(summary.recurring?.length) document.getElementById("insight").innerHTML += "<br><br><span style='color:var(--accent-red)'>⚠️ Warning: </span>" + summary.recurring.join("<br>");
 
@@ -299,11 +391,13 @@ async function loadData() {
     document.getElementById("income").innerText = format(summary.income || insight.income || 0);
     document.getElementById("expense").innerText = format(summary.expense || insight.expense || 0);
 
-    let savingRate = Math.round(((summary.income - summary.expense) / summary.income) * 100);
+    let savingRate = summary.income > 0 ? Math.round(((summary.income - summary.expense) / summary.income) * 100) : 0;
     document.getElementById("savingRate").innerText = "Saving Rate " + (isNaN(savingRate) ? "0" : savingRate) + "%";
 
     const cashStatusEl = document.getElementById("cashStatus");
-    if(savingRate > 30) {
+    if (summary.income === 0 && summary.expense === 0) {
+      cashStatusEl.innerText = "New Account"; cashStatusEl.style.color = "var(--text-muted)"; cashStatusEl.style.borderColor = "var(--glass-border)";
+    } else if(savingRate > 30) {
       cashStatusEl.innerText = "Growing"; cashStatusEl.style.color = "var(--accent-green)"; cashStatusEl.style.borderColor = "rgba(52,211,153,0.3)";
     } else if(savingRate > 10) {
       cashStatusEl.innerText = "Stable"; cashStatusEl.style.color = "var(--accent-blue)"; cashStatusEl.style.borderColor = "rgba(56,189,248,0.3)";
@@ -318,10 +412,11 @@ async function loadData() {
     else if(summary.healthScore >= 35) healthStatusEl.innerText = "Warning. Cek pengeluaran.";
     else healthStatusEl.innerText = "Kritis. Kurangi nongkrong.";
 
-    const top = await fetch("/top-category").then(r=>r.json());
+    // FIX: Sisipkan ?userId=${userId} ke fetch ini juga
+    const top = await fetch(`/top-category?userId=${userId}`).then(r=>r.json());
     document.getElementById("topCategory").innerText = `${top.category} (Rp${format(top.total)})`;
 
-    const categoryData = await fetch("/summary/category").then(r=>r.json());
+    const categoryData = await fetch(`/summary/category?userId=${userId}`).then(r=>r.json());
     renderCharts(categoryData);
   } catch (error) { console.error(error); }
 }
@@ -352,53 +447,84 @@ function renderCharts(categoryData) {
   });
 }
 
+// LOGIKA PAYWALL DINAMIS
 function checkPremiumAccess(actionType) {
   if (localStorage.getItem("isPro") !== "1") {
+    let msg = "Fitur ini khusus pengguna RantauFlow PRO.";
+    if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus PRO.";
+    if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus PRO.";
+    if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu khusus PRO.";
+    if (actionType === 'limit') msg = "Catat transaksi tanpa batas (unlimited) khusus PRO.";
+
+    document.getElementById("paywallText").innerText = msg;
     document.getElementById("paywallModal").classList.add("active");
+    
+    // Kembalikan dropdown dompet ke Utama jika ditolak
+    if(actionType === 'wallet' && document.getElementById("walletSelect").value === 'new') {
+        document.getElementById("walletSelect").value = 'utama';
+    }
     return;
   }
+  
   if (actionType === 'csv') exportToCSV();
   if (actionType === 'pdf') exportToPDF();
+}
+
+function handleWalletChange() {
+  const selector = document.getElementById("walletSelect");
+  if(selector.value === 'new') {
+    checkPremiumAccess('wallet');
+  }
 }
 
 function closeModal() { document.getElementById("paywallModal").classList.remove("active"); }
 
 function exportToCSV() {
   if (window.rawTransactions.length === 0) return alert("Tidak ada data transaksi.");
+  
+  // Terapkan batas kuota PRO: maksimal 60 transaksi pertama
+  const limitTx = window.rawTransactions.slice(0, 60);
+  if (window.rawTransactions.length > 60) {
+     alert("Pemberitahuan: Laporan CSV dibatasi hingga 60 transaksi pertama per bulan pada versi PRO.");
+  }
+
   let csvContent = "Tanggal,Kategori,Tipe Transaksi,Nominal (IDR)\n";
-  window.rawTransactions.forEach(tx => {
+  limitTx.forEach(tx => {
     let date = new Date(tx.created_at).toLocaleDateString("id-ID");
     csvContent += `${date},${tx.category},${tx.type},${tx.amount}\n`;
   });
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.setAttribute("href", url); link.setAttribute("download", "RantauFlow_Data.csv");
+  link.setAttribute("href", url); link.setAttribute("download", "RantauFlow_Data_PRO.csv");
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
 }
 
-// ================= FUNGSI EXPORT PDF 100% PERFECT FIX (CLEAN CSS METHOD) =================
 function exportToPDF() {
   const btn = document.getElementById('pdfBtn');
   const originalText = btn.innerHTML;
   btn.innerHTML = "⏳ Generating...";
   btn.disabled = true;
 
-  // Wajib gulir ke puncak layar
   window.scrollTo(0, 0);
-
-  // 1. Tambahkan class CSS sementara ke body
-  // Ini akan menghilangkan margin auto (Cropping Fix) & min-height 100vh (Black Page Fix)
   document.body.classList.add('is-printing');
 
-  // 2. Buat Lembar Putih Transaksi
   const formalReport = document.createElement("div");
   formalReport.id = "formalReportPage";
   formalReport.style.cssText = "background: #ffffff; color: #000000; width: 1000px; box-sizing: border-box; padding: 60px 80px; page-break-before: always; margin: 0;";
   
   const format = (n) => "Rp" + new Intl.NumberFormat("id-ID").format(n);
   
-  let tableRows = window.rawTransactions.map(tx => {
+  // Terapkan batas kuota PRO: maksimal 60 transaksi pertama untuk e-Statement PDF
+  const limitTx = window.rawTransactions.slice(0, 60);
+  let limitNotice = "";
+  if (window.rawTransactions.length > 60) {
+     limitNotice = `<div style="background:#fff3cd; color:#856404; padding:12px; border-radius:8px; margin-bottom:20px; font-size:14px; text-align:center; font-weight:500;">
+       ⚠️ Catatan: Dokumen ini dibatasi hingga 60 transaksi pertama di bulan ini untuk paket RantauFlow PRO.
+     </div>`;
+  }
+  
+  let tableRows = limitTx.map(tx => {
     let date = new Date(tx.created_at).toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
     let color = tx.type === 'expense' ? '#ef4444' : '#10b981';
     let prefix = tx.type === 'expense' ? '-' : '+';
@@ -418,6 +544,8 @@ function exportToPDF() {
       <h1 style="margin: 0; color: #0f172a; font-size: 32px; font-weight: 700; letter-spacing: -1px;">RantauFlow PRO</h1>
       <p style="margin: 6px 0 0 0; color: #64748b; font-size: 15px;">Official e-Statement by A-Tech Labs</p>
     </div>
+    
+    ${limitNotice}
     
     <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 30px;">
       <div>
@@ -451,7 +579,6 @@ function exportToPDF() {
     </div>
   `;
 
-  // 3. Masukkan tabel putih tepat di bawah dasbor (ke dalam mainWrapper)
   const mainWrapper = document.getElementById('mainWrapper');
   mainWrapper.appendChild(formalReport);
 
@@ -459,20 +586,12 @@ function exportToPDF() {
     margin:       0,
     filename:     'RantauFlow_Statement_PRO.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { 
-      scale: 2, 
-      useCORS: true, 
-      logging: false, 
-      width: 1000, 
-      windowWidth: 1000 
-    },
+    html2canvas:  { scale: 2, useCORS: true, logging: false, width: 1000, windowWidth: 1000 },
     jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
   };
   
-  // 4. Beri jeda 500ms agar browser selesai menerapkan style baru
   setTimeout(() => {
     html2pdf().set(opt).from(mainWrapper).save().then(() => {
-      // 5. Setelah beres, kembalikan tampilan seperti semula!
       mainWrapper.removeChild(formalReport);
       document.body.classList.remove('is-printing');
       btn.innerHTML = originalText;
@@ -496,10 +615,17 @@ function addMessageToUI(text, isUser = false) {
 async function sendData() {
   const input = document.getElementById("textInput");
   const text = input.value.trim(); if(!text) return;
+  // Ambil data dompet yang dipilih untuk diolah di backend nanti
+  const selectedWallet = document.getElementById("walletSelect").value;
+  
   addMessageToUI(text, true); input.value = "";
   const typing = addMessageToUI("Saving...", false); typing.style.opacity = "0.5";
   try {
-    const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text, userId: localStorage.getItem("userId") }) });
+    const res = await fetch("/chat", { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ message: text, wallet: selectedWallet, userId: localStorage.getItem("userId") }) 
+    });
     const data = await res.json(); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData();
   } catch(err) { typing.remove(); const errUI = addMessageToUI("Error jaringan.", false); errUI.style.color = "var(--accent-red)"; }
 }

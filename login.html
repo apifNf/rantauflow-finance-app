@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#070B14">
+  <link rel="manifest" href="/manifest.json">
+  
   <title>RantauFlow - Access</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +41,7 @@
         radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 40%),
         radial-gradient(circle at bottom left, rgba(52, 211, 153, 0.05), transparent 40%);
       color: var(--text-main);
+      padding: 20px; /* Memberi jarak agar card tidak mentok pinggir di HP */
     }
 
     /* GLASS CARD */
@@ -106,7 +110,7 @@
       background: rgba(0, 0, 0, 0.2);
       border: 1px solid var(--glass-border);
       color: var(--text-main);
-      font-size: 15px;
+      font-size: 16px; /* Wajib 16px agar iOS Safari tidak auto-zoom */
       transition: all 0.3s ease;
       outline: none;
     }
@@ -126,12 +130,13 @@
       padding: 14px;
       border: none;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--bg-dark);
       background: var(--text-main);
       cursor: pointer;
       transition: all 0.2s ease;
+      min-height: 52px; /* Pas untuk ukuran jempol */
     }
 
     button:hover {
@@ -169,6 +174,19 @@
       font-size: 14px;
       font-weight: 500;
       min-height: 20px;
+    }
+
+    /* ========================================================
+    MOBILE-FIRST CSS (Media Queries)
+    ======================================================== */
+    @media screen and (max-width: 480px) {
+      .glass-card {
+        padding: 40px 24px; /* Mengurangi padding agar form lebih luas di layar sempit */
+        border-radius: 20px;
+      }
+      .brand {
+        font-size: 22px;
+      }
     }
   </style>
 </head>
@@ -258,9 +276,9 @@
         const data = await res.json();
 
         if (data.success) {
-          // Menyimpan userId dan status Pro ke localStorage
+          // Menyimpan userId dan status Pro ke localStorage agar terbaca di index.html
           localStorage.setItem("userId", data.userId);
-          // Jika nanti backend mengirim status pro: localStorage.setItem("isPro", data.isPro);
+          localStorage.setItem("isPro", data.isPro || "0"); 
           
           showMessage("Berhasil masuk. Mengarahkan...");
           setTimeout(() => { window.location = "index.html"; }, 800);
