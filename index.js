@@ -220,11 +220,29 @@ app.post("/chat-ai", (req, res) => {
 app.get('/summary', (req, res) => {
   const userId = req.query.userId;
   if (!userId || !db || dbStatus !== "OK") return res.json({ error: "Unauthorized / DB Offline" });
+  
   db.all('SELECT * FROM transactions WHERE user_id = ?', [userId], (err, rows) => {
     if (err) return res.json({ error: err.message });
+    
     let income = 0; let expense = 0;
-    rows.forEach(tx => { if (tx.type === "income") income += tx.amount; if (tx.type === "expense") expense += tx.amount; });
-    res.json({ transactions: rows, income, expense, balance: (income - expense), healthScore: 100, recurring: [], recent: [], weeklySpend: 0 });
+    rows.forEach(tx => { 
+        if (tx.type === "income") income += tx.amount; 
+        if (tx.type === "expense") expense += tx.amount; 
+    });
+    
+    // POLESAN TERAKHIR: Ambil 5 transaksi paling baru
+    const riwayatTerbaru = [...rows].reverse().slice(0, 5);
+    
+    res.json({ 
+        transactions: rows, 
+        income, 
+        expense, 
+        balance: (income - expense), 
+        healthScore: 100, 
+        recurring: [], 
+        recent: riwayatTerbaru, // Masukkan datanya ke sini
+        weeklySpend: 0 
+    });
   });
 });
 
