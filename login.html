@@ -8,15 +8,26 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .login-box { background: #1e293b; padding: 40px; border-radius: 16px; width: 100%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
         .logo { width: 50px; height: 50px; background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #10b981; font-weight: bold; font-size: 20px; margin: 0 auto 20px; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; outline: none; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: #38bdf8; }
         .password-container { position: relative; width: 100%; }
-        .eye-icon { position: absolute; right: 12px; top: 12px; cursor: pointer; font-size: 16px; user-select: none; }
-        button { width: 100%; padding: 12px; background: #f8fafc; color: #0f172a; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 10px; }
+        
+        /* Style Icon Mata Premium */
+        .eye-icon { position: absolute; right: 12px; top: 12px; cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #64748b; }
+        .eye-icon:hover { color: #cbd5e1; }
+        
+        button { width: 100%; padding: 12px; background: #f8fafc; color: #0f172a; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 10px; transition: 0.3s; }
+        button:hover { background: #e2e8f0; }
+        .btn-outline { background: transparent; color: white; border: 1px solid #334155; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+        
         .link { font-size: 12px; color: #94a3b8; margin-top: 15px; display: block; }
         .link a { color: #38bdf8; text-decoration: none; cursor: pointer; }
+        .link a:hover { text-decoration: underline; }
         #msg { color: #ef4444; font-size: 12px; margin-top: 10px; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
-        .modal-content { background: #1e293b; padding: 30px; border-radius: 12px; width: 90%; max-width: 300px; text-align: center; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 999; }
+        .modal-content { background: #1e293b; padding: 30px; border-radius: 12px; width: 90%; max-width: 300px; text-align: center; border: 1px solid #334155; }
     </style>
 </head>
 <body>
@@ -26,60 +37,62 @@
     <h2 style="margin:0 0 5px; font-size: 20px;">RantauFlow</h2>
     <p style="margin: 0 0 25px; font-size: 12px; color: #94a3b8;">Intelligent Financial System</p>
     
-    <input type="email" id="email" placeholder="Email Anda" required>
+    <input type="email" id="email" placeholder="Email Anda" required autocomplete="off">
     
-    <!-- Fitur Mata Password -->
     <div class="password-container">
         <input type="password" id="password" placeholder="Password" required>
-        <span class="eye-icon" onclick="togglePassword('password', this)">👁️</span>
+        <span class="eye-icon" onclick="togglePassword('password', this)" id="eyeIconMain">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+        </span>
     </div>
     
     <button onclick="login()">Access Account</button>
-    <button onclick="register()" style="background: transparent; color: white; border: 1px solid #334155;">Buat Akun Baru</button>
+    <button onclick="register()" class="btn-outline">Buat Akun Baru</button>
     
-    <!-- Fitur Lupa Password -->
     <span class="link"><a onclick="showModal()">Lupa Password?</a></span>
     
     <div id="msg"></div>
 </div>
 
-<!-- Modal Lupa Password -->
 <div class="modal" id="forgotModal">
     <div class="modal-content">
-        <h3>Reset Password</h3>
-        <input type="email" id="resetEmail" placeholder="Masukkan Email Terdaftar">
-        <button onclick="requestOTP()">Kirim Kode OTP</button>
+        <h3 style="margin-top:0;">Reset Password</h3>
+        <input type="email" id="resetEmail" placeholder="Masukkan Email Terdaftar" autocomplete="off">
+        <button onclick="requestOTP()" class="btn-outline">Kirim Kode OTP</button>
         
         <div id="otpSection" style="display:none; margin-top: 15px;">
-            <input type="text" id="otpCode" placeholder="Masukkan 6 Digit OTP">
+            <input type="text" id="otpCode" placeholder="Masukkan 6 Digit OTP" autocomplete="off">
             <div class="password-container">
                 <input type="password" id="newPassword" placeholder="Password Baru">
-                <span class="eye-icon" onclick="togglePassword('newPassword', this)">👁️</span>
+                <span class="eye-icon" onclick="togglePassword('newPassword', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                </span>
             </div>
-            <button onclick="resetPassword()" style="background: #10b981; color: white;">Simpan Password Baru</button>
+            <button onclick="resetPassword()" style="background: #10b981; color: white; border:none;">Simpan Password Baru</button>
         </div>
-        <span class="link"><a onclick="hideModal()">Batal</a></span>
+        <span class="link" style="margin-top:20px;"><a onclick="hideModal()" style="color:#ef4444;">Batalkan</a></span>
         <div id="modalMsg" style="color: #ef4444; font-size: 12px; margin-top: 10px;"></div>
     </div>
 </div>
 
 <script>
-    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' : '';
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
 
-    // Fungsi Show/Hide Password (Gambar Mata)
+    // Asset Icon SVG
+    const svgEyeSlash = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+    const svgEyeOpen = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+
     function togglePassword(inputId, iconElement) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
             input.type = "text";
-            iconElement.innerText = "🙈";
+            iconElement.innerHTML = svgEyeOpen; 
         } else {
             input.type = "password";
-            iconElement.innerText = "👁️";
+            iconElement.innerHTML = svgEyeSlash; 
         }
     }
 
-    // Modal Controller
     function showModal() { document.getElementById('forgotModal').style.display = 'flex'; }
     function hideModal() { document.getElementById('forgotModal').style.display = 'none'; document.getElementById('otpSection').style.display = 'none'; }
 
@@ -109,9 +122,7 @@
             msgBox.innerText = "Akun berhasil dibuat! Silakan klik Access Account.";
         } else { 
             msgBox.style.color = "#ef4444";
-            // KITA TAMPILKAN ERROR ASLINYA DI SINI
             msgBox.innerText = "Gagal: " + data.message; 
-            alert("Sistem menangkap error: " + data.message); // Alert paksa agar kamu pasti baca
         }
     }
 
