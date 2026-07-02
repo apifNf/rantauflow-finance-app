@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <!-- PWA & MOBILE RESPONSIVE TAG Wajib -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#070B14">
   <link rel="manifest" href="/manifest.json">
@@ -38,95 +37,35 @@
       overflow-x: hidden;
     }
 
-    /* ========================================================
-    CSS KHUSUS PRINT - INI KUNCI 100% FIX-NYA 
-    ======================================================== */
-    body.is-printing {
-      background-color: #ffffff !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      min-height: auto !important;
-      display: block !important;
-    }
-    body.is-printing #mainWrapper {
-      width: 1000px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      background: #ffffff !important;
-    }
-    body.is-printing #dashboardView {
-      width: 1000px !important;
-      max-width: 1000px !important;
-      margin: 0 !important;
-      min-height: auto !important;
-    }
-    body.is-printing .modal-overlay, body.is-printing #limitBanner {
-      display: none !important;
-    }
-    /* ======================================================== */
+    /* CSS KHUSUS PRINT */
+    body.is-printing { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; min-height: auto !important; display: block !important; }
+    body.is-printing #mainWrapper { width: 1000px !important; margin: 0 !important; padding: 0 !important; background: #ffffff !important; }
+    body.is-printing #dashboardView { width: 1000px !important; max-width: 1000px !important; margin: 0 !important; min-height: auto !important; }
+    body.is-printing .modal-overlay, body.is-printing #limitBanner { display: none !important; }
 
-    #mainWrapper {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #dashboardView {
-      width: 100%;
-      max-width: 1000px;
-      background-color: var(--bg-dark);
-      background-image: radial-gradient(circle at top right, rgba(56, 189, 248, 0.05), transparent 40%),
-                        radial-gradient(circle at bottom left, rgba(52, 211, 153, 0.05), transparent 40%);
-      padding: 30px 20px;
-      box-sizing: border-box;
-    }
-
-    .glass-card {
-      background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border); border-radius: 16px; padding: 24px;
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease, border-color 0.2s ease;
-    }
+    #mainWrapper { width: 100%; display: flex; flex-direction: column; align-items: center; }
+    #dashboardView { width: 100%; max-width: 1000px; background-color: var(--bg-dark); background-image: radial-gradient(circle at top right, rgba(56, 189, 248, 0.05), transparent 40%), radial-gradient(circle at bottom left, rgba(52, 211, 153, 0.05), transparent 40%); padding: 30px 20px; box-sizing: border-box; }
     
+    .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 24px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease, border-color 0.2s ease; }
     h1, h2, h3, h4 { margin: 0; font-weight: 600; }
     h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;}
     
     .flex-row { display: flex; gap: 16px; margin-bottom: 24px; }
     .flex-col { display: flex; flex-direction: column; gap: 16px; }
 
-    .premium-input {
-      flex: 1; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--glass-border);
-      background: rgba(0,0,0,0.2); color: white; font-family: inherit; outline: none; transition: border 0.3s ease;
-      font-size: 15px;
-    }
+    .premium-input { flex: 1; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; font-family: inherit; outline: none; transition: border 0.3s ease; font-size: 15px; }
     .premium-input:focus { border-color: var(--accent-blue); }
-    
-    /* Custom style dropdown dompet */
-    select.premium-input {
-      appearance: none;
-      background: rgba(0,0,0,0.3) url('data:image/svg+xml;utf8,<svg fill="%2394A3B8" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center;
-      cursor: pointer;
-    }
+    select.premium-input { appearance: none; background: rgba(0,0,0,0.3) url('data:image/svg+xml;utf8,<svg fill="%2394A3B8" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center; cursor: pointer; }
 
-    .btn {
-      padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
-      font-family: inherit; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    }
+    .btn { padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-primary { background: var(--text-main); color: var(--bg-dark); }
     .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-main); }
     .btn-accent { background: var(--accent-blue); color: var(--bg-dark); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .chip {
-      background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted);
-      padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s ease;
-    }
+    .chip { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s ease; }
 
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px); display: flex; justify-content: center;
-      align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-content { max-width: 420px; width: 90%; text-align: center; transform: translateY(20px); transition: transform 0.3s ease; }
     .modal-overlay.active .modal-content { transform: translateY(0); }
@@ -135,39 +74,14 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
 
-    /* ========================================================
-    MOBILE-FIRST CSS (Media Queries)
-    ======================================================== */
     @media screen and (max-width: 768px) {
-      body {
-        padding: 0;
-        font-size: 16px; 
-      }
-      #dashboardView {
-        padding: 20px 15px;
-      }
-      .flex-row {
-        flex-direction: column; /* Mengubah kolom jadi baris vertikal */
-        gap: 16px;
-      }
-      .glass-card {
-        padding: 20px;
-        width: 100% !important;
-        box-sizing: border-box;
-      }
-      /* Tombol dan Input menyesuaikan ukuran jempol */
-      .btn, .premium-input, select {
-        width: 100% !important;
-        min-height: 52px;
-        font-size: 16px; /* Mencegah auto-zoom di iOS Safari */
-      }
-      .action-buttons {
-        flex-direction: column;
-        width: 100%;
-      }
-      .header-title h1 {
-        font-size: 18px !important;
-      }
+      body { padding: 0; font-size: 16px; }
+      #dashboardView { padding: 20px 15px; }
+      .flex-row { flex-direction: column; gap: 16px; }
+      .glass-card { padding: 20px; width: 100% !important; box-sizing: border-box; }
+      .btn, .premium-input, select { width: 100% !important; min-height: 52px; font-size: 16px; }
+      .action-buttons { flex-direction: column; width: 100%; }
+      .header-title h1 { font-size: 18px !important; }
       #balance { font-size: 36px !important; }
       #chatBox { height: 200px !important; }
     }
@@ -176,16 +90,13 @@
 <body>
 
 <div id="mainWrapper">
-  
   <div id="dashboardView">
     
-    <!-- Banner Limit Transaksi (Muncul Otomatis untuk Free User) -->
     <div id="limitBanner" style="display: none; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--accent-red); padding: 12px 16px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; line-height: 1.5;">
       ⚠️ Sisa kuota catatan gratis bulan ini: <strong id="quotaCount">--</strong> transaksi. <br>
       <a href="#" onclick="checkPremiumAccess('limit')" style="color: var(--accent-blue); text-decoration: underline; font-weight: bold; margin-left: 4px; display: inline-block; margin-top: 4px;">Upgrade Pro (Rp 9.900)</a>
     </div>
 
-    <!-- Header -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;" data-html2canvas-ignore>
       <div class="header-title" style="display:flex; align-items:center;">
         <div style="width:36px; height:36px; border-radius:10px; background:rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); display:flex; align-items:center; justify-content:center; color:var(--accent-green); font-weight:700; margin-right:12px; font-size:14px;">RF</div>
@@ -198,7 +109,6 @@
       </div>
     </div>
 
-    <!-- Top Cards (Saldo & Income/Expense) -->
     <div class="flex-row" style="align-items: stretch;">
       <div class="glass-card" style="flex:1.2; position: relative; overflow: hidden;">
         <div style="position:absolute; top:-50px; left:-50px; width:150px; height:150px; background:var(--accent-blue); filter:blur(80px); opacity:0.15; border-radius:50%;"></div>
@@ -229,7 +139,6 @@
       </div>
     </div>
 
-    <!-- AI Coach & Health Score -->
     <div class="flex-row">
       <div class="glass-card" style="flex:2;">
         <h3>✨ AI Spending Coach</h3>
@@ -243,29 +152,25 @@
       </div>
     </div>
 
-    <!-- Input Transaksi / Chat AI Area -->
     <div class="flex-row" data-html2canvas-ignore>
       <div class="glass-card" style="flex:2;">
         <h3>Add Transaction / Ask AI</h3>
         
         <div id="chatBox" style="height:250px; overflow-y:auto; background:rgba(0,0,0,0.15); border-radius:12px; padding:16px; margin-bottom:16px; display:flex; flex-direction:column; gap:12px; border:1px solid var(--glass-border);"></div>
         
-        <!-- Input & Dompet Selector -->
         <div style="display:flex; flex-direction:column; gap:12px;">
-          <!-- Dompet Selector (PRO Feature UI) -->
           <select id="walletSelect" class="premium-input" onchange="handleWalletChange()">
             <option value="utama">👛 Dompet Utama (Cash)</option>
             <option value="new">🔒 + Tambah Dompet/Rekening (PRO)</option>
           </select>
           
           <div class="action-buttons" style="display:flex; gap:12px;">
-            <input id="textInput" class="premium-input" placeholder="contoh: makan 20k atau roast gue">
+            <input id="textInput" class="premium-input" placeholder="contoh: makan 20k atau roast gue" autocomplete="off">
             <button id="sendBtn" onclick="sendData()" class="btn btn-primary">Kirim</button>
             <button id="aiBtn" onclick="askAI()" class="btn btn-outline">Tanya AI</button>
           </div>
         </div>
 
-        <!-- Quick Chips -->
         <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
           <button onclick="quickAdd('makan 20k')" class="chip">+ Makan 20k</button>
           <button onclick="quickAdd('grab 30k')" class="chip">+ Grab 30k</button>
@@ -274,7 +179,6 @@
         </div>
       </div>
 
-      <!-- Categories & History -->
       <div class="flex-col" style="flex:1;">
         <div class="glass-card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -290,7 +194,6 @@
       </div>
     </div>
 
-    <!-- Export & Reports Area -->
     <div class="flex-row" style="align-items: center; justify-content: space-between; margin-top: 10px;" data-html2canvas-ignore>
       <h3 style="margin: 0; padding-left:16px;">Laporan Finansial</h3>
       <div class="action-buttons" style="display: flex; gap: 12px; padding: 0 16px;">
@@ -308,7 +211,6 @@
   </div>
 </div> 
 
-<!-- DYNAMIC PAYWALL MODAL -->
 <div id="paywallModal" class="modal-overlay" data-html2canvas-ignore>
   <div class="modal-content glass-card">
     <div style="width:50px; height:50px; border-radius:50%; background:rgba(56, 189, 248, 0.1); color:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-size:24px; margin: 0 auto 16px auto;">🔒</div>
@@ -324,22 +226,19 @@
 </div>
 
 <script>
-// ================== PENGATURAN GLOBAL (TARUH DI PALING ATAS) ==================
-    // Kita taruh di luar function agar semua fitur (chat, tambah data) bisa memakainya
     const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
     const userId = localStorage.getItem('rf_user_id');
 
-    // ================== SATPAM UTAMA (KITA JINAKKAN SEMENTARA) ==================
     if (!userId) {
         console.error("Peringatan: Sistem kehilangan userId! Tapi saya tahan agar tidak pindah halaman.");
-        // window.location.href = 'login.html'; // KODE TENDANGAN KITA MATIKAN SEMENTARA DENGAN GARIS MIRING
+        // window.location.href = 'login.html'; 
     }
 
     window.rawTransactions = [];
     window.summaryData = {};
 
     async function loadData() {
-        if (!userId) return; // Hentikan proses jika memori user benar-benar kosong
+        if (!userId) return; 
 
         try {
             const isPro = localStorage.getItem("rf_is_pro");
@@ -350,319 +249,334 @@
                 if (limitBanner) limitBanner.style.display = "none";
             }
 
-            // Ambil data dari server (API_URL dan userId sekarang otomatis terbaca dari Global)
-            const res = await fetch(`${API_URL}/summary?userId=${userId}`);
-            const data = await res.json();
+            const insight = await fetch(`${API_URL}/insight?userId=${userId}`).then(r=>r.json());
+            document.getElementById("insight").innerHTML = insight.insight.join("<br>");
 
-            // Jika API membalas error, JANGAN di-redirect, cukup tampilkan di console log
-            if (data.error) {
-                console.error("Error Data API:", data.error);
+            const summary = await fetch(`${API_URL}/summary?userId=${userId}`).then(r=>r.json());
+            
+            if (summary.error) {
+                console.error("Error Data API:", summary.error);
                 return; 
             }
 
-    // FIX: Sisipkan ?userId=${userId} ke setiap URL fetch
-    const insight = await fetch(`/insight?userId=${userId}`).then(r=>r.json());
-    document.getElementById("insight").innerHTML = insight.insight.join("<br>");
+            window.rawTransactions = summary.transactions || [];
+            window.summaryData = summary; 
 
-    const summary = await fetch(`/summary?userId=${userId}`).then(r=>r.json());
-    window.rawTransactions = summary.transactions || [];
-    window.summaryData = summary; 
+            // PENGHITUNGAN KATEGORI & GRAFIK (Tanpa Server - Sangat Cepat!)
+            if (window.rawTransactions.length > 0) {
+                let catTotals = {};
+                window.rawTransactions.forEach(tx => {
+                    if(tx.type === 'expense') {
+                        catTotals[tx.category] = (catTotals[tx.category] || 0) + tx.amount;
+                    }
+                });
+                
+                let topCat = "Belum Ada";
+                let maxVal = 0;
+                let chartData = [];
+                for (let [cat, val] of Object.entries(catTotals)) {
+                    chartData.push({category: cat, total: val});
+                    if(val > maxVal) { maxVal = val; topCat = cat; }
+                }
+                
+                document.getElementById("topCategory").innerText = `${topCat.charAt(0).toUpperCase() + topCat.slice(1)} (Rp${new Intl.NumberFormat("id-ID").format(maxVal)})`;
+                renderCharts({ data: chartData });
+            } else {
+                document.getElementById("topCategory").innerText = "Belum Ada Data";
+                renderCharts({ data: [] });
+            }
 
-    // Fitur Limit 30 Transaksi (Free User)
-    if (isPro !== "1") {
-      const txCount = window.rawTransactions.length;
-      const maxFree = 30;
-      let sisa = maxFree - txCount;
-      if(sisa < 0) sisa = 0;
-      
-      document.getElementById("limitBanner").style.display = "block";
-      document.getElementById("quotaCount").innerText = sisa;
-      
-      if(sisa === 0) {
-        document.getElementById("textInput").disabled = true;
-        document.getElementById("sendBtn").disabled = true;
-        document.getElementById("textInput").placeholder = "Kuota Habis. Silakan Upgrade PRO 🔒";
-      }
+            // Fitur Limit 30 Transaksi (Free User)
+            if (isPro !== "1") {
+              const txCount = window.rawTransactions.length;
+              const maxFree = 30;
+              let sisa = maxFree - txCount;
+              if(sisa < 0) sisa = 0;
+              
+              document.getElementById("limitBanner").style.display = "block";
+              document.getElementById("quotaCount").innerText = sisa;
+              
+              if(sisa === 0) {
+                document.getElementById("textInput").disabled = true;
+                document.getElementById("sendBtn").disabled = true;
+                document.getElementById("textInput").placeholder = "Kuota Habis. Silakan Upgrade PRO 🔒";
+              }
+            }
+
+            const historyBox = document.getElementById("history");
+            historyBox.innerHTML = "";
+            if (summary.recent.length === 0) {
+               historyBox.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 14px;">Belum ada transaksi 💸</div>`;
+            } else {
+              summary.recent.forEach(tx => {
+                historyBox.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;">
+                  <span style="color:var(--text-main); text-transform:capitalize;">${tx.category}</span>
+                  <span style="color:var(--text-muted); font-family:monospace;">- Rp${tx.amount.toLocaleString("id-ID")}</span>
+                </div>`;
+              });
+            }
+
+            if(summary.recurring?.length) document.getElementById("insight").innerHTML += "<br><br><span style='color:var(--accent-red)'>⚠️ Warning: </span>" + summary.recurring.join("<br>");
+
+            const format = (n) => new Intl.NumberFormat("id-ID").format(n);
+            const balanceEl = document.getElementById("balance");
+            balanceEl.innerText = format(summary.balance || insight.balance || 0);
+            balanceEl.style.color = (insight.balance < 0) ? "var(--accent-red)" : "var(--text-main)";
+
+            document.getElementById("income").innerText = format(summary.income || insight.income || 0);
+            document.getElementById("expense").innerText = format(summary.expense || insight.expense || 0);
+
+            let savingRate = summary.income > 0 ? Math.round(((summary.income - summary.expense) / summary.income) * 100) : 0;
+            document.getElementById("savingRate").innerText = "Saving Rate " + (isNaN(savingRate) ? "0" : savingRate) + "%";
+
+            const cashStatusEl = document.getElementById("cashStatus");
+            if (summary.income === 0 && summary.expense === 0) {
+              cashStatusEl.innerText = "New Account"; cashStatusEl.style.color = "var(--text-muted)"; cashStatusEl.style.borderColor = "var(--glass-border)";
+            } else if(savingRate > 30) {
+              cashStatusEl.innerText = "Growing"; cashStatusEl.style.color = "var(--accent-green)"; cashStatusEl.style.borderColor = "rgba(52,211,153,0.3)";
+            } else if(savingRate > 10) {
+              cashStatusEl.innerText = "Stable"; cashStatusEl.style.color = "var(--accent-blue)"; cashStatusEl.style.borderColor = "rgba(56,189,248,0.3)";
+            } else {
+              cashStatusEl.innerText = "Burn Mode"; cashStatusEl.style.color = "var(--accent-red)"; cashStatusEl.style.borderColor = "rgba(248,113,113,0.3)";
+            }
+
+            document.getElementById("healthScore").innerText = summary.healthScore + "/100";
+            const healthStatusEl = document.getElementById("healthStatus");
+            if(summary.healthScore >= 75) healthStatusEl.innerText = "Sehat. Dompet aman.";
+            else if(summary.healthScore >= 55) healthStatusEl.innerText = "Lumayan stabil.";
+            else if(summary.healthScore >= 35) healthStatusEl.innerText = "Warning. Cek pengeluaran.";
+            else healthStatusEl.innerText = "Kritis. Kurangi nongkrong.";
+
+        } catch (error) { console.error("Error di loadData:", error); }
     }
 
-    const historyBox = document.getElementById("history");
-    historyBox.innerHTML = "";
-    if (summary.recent.length === 0) {
-       historyBox.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 14px;">Belum ada transaksi 💸</div>`;
-    } else {
-      summary.recent.forEach(tx => {
-        historyBox.innerHTML += `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;">
-          <span style="color:var(--text-main); text-transform:capitalize;">${tx.category}</span>
-          <span style="color:var(--text-muted); font-family:monospace;">- Rp${tx.amount.toLocaleString("id-ID")}</span>
-        </div>`;
+    function renderCharts(categoryData) {
+      const labels = categoryData.data.map(i=>i.category);
+      const values = categoryData.data.map(i=>i.total);
+
+      const ctx = document.getElementById("myChart").getContext("2d");
+      if(window.myChartInstance) window.myChartInstance.destroy();
+      window.myChartInstance = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: labels.map(l => ({ food:"Makan", transport:"Transport", shopping:"Belanja", lifestyle:"Nongkrong", other:"Lainnya" }[l] || l)),
+          datasets: [{ data: values, borderColor: "#070B14", borderWidth: 4, backgroundColor: ["#34D399", "#38BDF8", "#F87171", "#FBBF24", "#A78BFA"], hoverOffset: 4 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: "#94A3B8" } } } }
+      });
+
+      const trendCtx = document.getElementById("cashTrend");
+      if(window.cashLine) window.cashLine.destroy();
+      let gradient = trendCtx.getContext("2d").createLinearGradient(0, 0, 0, 70);
+      gradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)'); gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
+      window.cashLine = new Chart(trendCtx, {
+        type: "line",
+        data: { labels: ["W1","W2","W3","W4","W5","W6"], datasets: [{ data: [14, 18, 17, 24, 21, 29], borderColor: "#38BDF8", backgroundColor: gradient, borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, layout: { padding: 0 } }
       });
     }
 
-    if(summary.recurring?.length) document.getElementById("insight").innerHTML += "<br><br><span style='color:var(--accent-red)'>⚠️ Warning: </span>" + summary.recurring.join("<br>");
+    function checkPremiumAccess(actionType) {
+      if (localStorage.getItem("rf_is_pro") !== "1") {
+        let msg = "Fitur ini khusus pengguna RantauFlow PRO.";
+        if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus PRO.";
+        if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus PRO.";
+        if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu khusus PRO.";
+        if (actionType === 'limit') msg = "Catat transaksi tanpa batas (unlimited) khusus PRO.";
 
-    const format = (n) => new Intl.NumberFormat("id-ID").format(n);
-    const balanceEl = document.getElementById("balance");
-    balanceEl.innerText = format(summary.balance || insight.balance || 0);
-    balanceEl.style.color = (insight.balance < 0) ? "var(--accent-red)" : "var(--text-main)";
-
-    document.getElementById("income").innerText = format(summary.income || insight.income || 0);
-    document.getElementById("expense").innerText = format(summary.expense || insight.expense || 0);
-
-    let savingRate = summary.income > 0 ? Math.round(((summary.income - summary.expense) / summary.income) * 100) : 0;
-    document.getElementById("savingRate").innerText = "Saving Rate " + (isNaN(savingRate) ? "0" : savingRate) + "%";
-
-    const cashStatusEl = document.getElementById("cashStatus");
-    if (summary.income === 0 && summary.expense === 0) {
-      cashStatusEl.innerText = "New Account"; cashStatusEl.style.color = "var(--text-muted)"; cashStatusEl.style.borderColor = "var(--glass-border)";
-    } else if(savingRate > 30) {
-      cashStatusEl.innerText = "Growing"; cashStatusEl.style.color = "var(--accent-green)"; cashStatusEl.style.borderColor = "rgba(52,211,153,0.3)";
-    } else if(savingRate > 10) {
-      cashStatusEl.innerText = "Stable"; cashStatusEl.style.color = "var(--accent-blue)"; cashStatusEl.style.borderColor = "rgba(56,189,248,0.3)";
-    } else {
-      cashStatusEl.innerText = "Burn Mode"; cashStatusEl.style.color = "var(--accent-red)"; cashStatusEl.style.borderColor = "rgba(248,113,113,0.3)";
+        document.getElementById("paywallText").innerText = msg;
+        document.getElementById("paywallModal").classList.add("active");
+        
+        if(actionType === 'wallet' && document.getElementById("walletSelect").value === 'new') {
+            document.getElementById("walletSelect").value = 'utama';
+        }
+        return;
+      }
+      
+      if (actionType === 'csv') exportToCSV();
+      if (actionType === 'pdf') exportToPDF();
     }
 
-    document.getElementById("healthScore").innerText = summary.healthScore + "/100";
-    const healthStatusEl = document.getElementById("healthStatus");
-    if(summary.healthScore >= 75) healthStatusEl.innerText = "Sehat. Dompet aman.";
-    else if(summary.healthScore >= 55) healthStatusEl.innerText = "Lumayan stabil.";
-    else if(summary.healthScore >= 35) healthStatusEl.innerText = "Warning. Cek pengeluaran.";
-    else healthStatusEl.innerText = "Kritis. Kurangi nongkrong.";
-
-    // FIX: Sisipkan ?userId=${userId} ke fetch ini juga
-    const top = await fetch(`/top-category?userId=${userId}`).then(r=>r.json());
-    document.getElementById("topCategory").innerText = `${top.category} (Rp${format(top.total)})`;
-
-    const categoryData = await fetch(`/summary/category?userId=${userId}`).then(r=>r.json());
-    renderCharts(categoryData);
-  } catch (error) { console.error(error); }
-}
-
-function renderCharts(categoryData) {
-  const labels = categoryData.data.map(i=>i.category);
-  const values = categoryData.data.map(i=>i.total);
-
-  const ctx = document.getElementById("myChart").getContext("2d");
-  if(window.myChartInstance) window.myChartInstance.destroy();
-  window.myChartInstance = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: labels.map(l => ({ food:"Makan", transport:"Transport", shopping:"Belanja", lifestyle:"Nongkrong", other:"Lainnya" }[l] || l)),
-      datasets: [{ data: values, borderColor: "#070B14", borderWidth: 4, backgroundColor: ["#34D399", "#38BDF8", "#F87171", "#FBBF24", "#A78BFA"], hoverOffset: 4 }]
-    },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: "#94A3B8" } } } }
-  });
-
-  const trendCtx = document.getElementById("cashTrend");
-  if(window.cashLine) window.cashLine.destroy();
-  let gradient = trendCtx.getContext("2d").createLinearGradient(0, 0, 0, 70);
-  gradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)'); gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
-  window.cashLine = new Chart(trendCtx, {
-    type: "line",
-    data: { labels: ["W1","W2","W3","W4","W5","W6"], datasets: [{ data: [14, 18, 17, 24, 21, 29], borderColor: "#38BDF8", backgroundColor: gradient, borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, layout: { padding: 0 } }
-  });
-}
-
-// LOGIKA PAYWALL DINAMIS
-function checkPremiumAccess(actionType) {
-  if (localStorage.getItem("isPro") !== "1") {
-    let msg = "Fitur ini khusus pengguna RantauFlow PRO.";
-    if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus PRO.";
-    if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus PRO.";
-    if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu khusus PRO.";
-    if (actionType === 'limit') msg = "Catat transaksi tanpa batas (unlimited) khusus PRO.";
-
-    document.getElementById("paywallText").innerText = msg;
-    document.getElementById("paywallModal").classList.add("active");
-    
-    // Kembalikan dropdown dompet ke Utama jika ditolak
-    if(actionType === 'wallet' && document.getElementById("walletSelect").value === 'new') {
-        document.getElementById("walletSelect").value = 'utama';
+    function handleWalletChange() {
+      const selector = document.getElementById("walletSelect");
+      if(selector.value === 'new') {
+        checkPremiumAccess('wallet');
+      }
     }
-    return;
-  }
-  
-  if (actionType === 'csv') exportToCSV();
-  if (actionType === 'pdf') exportToPDF();
-}
 
-function handleWalletChange() {
-  const selector = document.getElementById("walletSelect");
-  if(selector.value === 'new') {
-    checkPremiumAccess('wallet');
-  }
-}
+    function closeModal() { document.getElementById("paywallModal").classList.remove("active"); }
 
-function closeModal() { document.getElementById("paywallModal").classList.remove("active"); }
+    function exportToCSV() {
+      if (window.rawTransactions.length === 0) return alert("Tidak ada data transaksi.");
+      
+      const limitTx = window.rawTransactions.slice(0, 60);
+      if (window.rawTransactions.length > 60) {
+         alert("Pemberitahuan: Laporan CSV dibatasi hingga 60 transaksi pertama per bulan pada versi PRO.");
+      }
 
-function exportToCSV() {
-  if (window.rawTransactions.length === 0) return alert("Tidak ada data transaksi.");
-  
-  // Terapkan batas kuota PRO: maksimal 60 transaksi pertama
-  const limitTx = window.rawTransactions.slice(0, 60);
-  if (window.rawTransactions.length > 60) {
-     alert("Pemberitahuan: Laporan CSV dibatasi hingga 60 transaksi pertama per bulan pada versi PRO.");
-  }
+      let csvContent = "Tanggal,Kategori,Tipe Transaksi,Nominal (IDR)\n";
+      limitTx.forEach(tx => {
+        let date = new Date(tx.created_at).toLocaleDateString("id-ID");
+        csvContent += `${date},${tx.category},${tx.type},${tx.amount}\n`;
+      });
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url); link.setAttribute("download", "RantauFlow_Data_PRO.csv");
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
 
-  let csvContent = "Tanggal,Kategori,Tipe Transaksi,Nominal (IDR)\n";
-  limitTx.forEach(tx => {
-    let date = new Date(tx.created_at).toLocaleDateString("id-ID");
-    csvContent += `${date},${tx.category},${tx.type},${tx.amount}\n`;
-  });
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url); link.setAttribute("download", "RantauFlow_Data_PRO.csv");
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-}
+    function exportToPDF() {
+      const btn = document.getElementById('pdfBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "⏳ Generating...";
+      btn.disabled = true;
 
-function exportToPDF() {
-  const btn = document.getElementById('pdfBtn');
-  const originalText = btn.innerHTML;
-  btn.innerHTML = "⏳ Generating...";
-  btn.disabled = true;
+      window.scrollTo(0, 0);
+      document.body.classList.add('is-printing');
 
-  window.scrollTo(0, 0);
-  document.body.classList.add('is-printing');
+      const formalReport = document.createElement("div");
+      formalReport.id = "formalReportPage";
+      formalReport.style.cssText = "background: #ffffff; color: #000000; width: 1000px; box-sizing: border-box; padding: 60px 80px; page-break-before: always; margin: 0;";
+      
+      const format = (n) => "Rp" + new Intl.NumberFormat("id-ID").format(n);
+      
+      const limitTx = window.rawTransactions.slice(0, 60);
+      let limitNotice = "";
+      if (window.rawTransactions.length > 60) {
+         limitNotice = `<div style="background:#fff3cd; color:#856404; padding:12px; border-radius:8px; margin-bottom:20px; font-size:14px; text-align:center; font-weight:500;">
+           ⚠️ Catatan: Dokumen ini dibatasi hingga 60 transaksi pertama di bulan ini untuk paket RantauFlow PRO.
+         </div>`;
+      }
+      
+      let tableRows = limitTx.map(tx => {
+        let date = new Date(tx.created_at).toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
+        let color = tx.type === 'expense' ? '#ef4444' : '#10b981';
+        let prefix = tx.type === 'expense' ? '-' : '+';
+        return `
+          <tr style="border-bottom: 1px solid #e2e8f0; font-size: 14px;">
+            <td style="padding: 14px 10px; color: #334155;">${date}</td>
+            <td style="padding: 14px 10px; text-transform: capitalize; color: #334155; font-weight: 500;">${tx.category}</td>
+            <td style="padding: 14px 10px; text-transform: capitalize; color: #64748b;">${tx.type}</td>
+            <td style="padding: 14px 10px; text-align: right; color: ${color}; font-weight: 700;">${prefix} ${format(tx.amount)}</td>
+          </tr>
+        `;
+      }).join('');
 
-  const formalReport = document.createElement("div");
-  formalReport.id = "formalReportPage";
-  formalReport.style.cssText = "background: #ffffff; color: #000000; width: 1000px; box-sizing: border-box; padding: 60px 80px; page-break-before: always; margin: 0;";
-  
-  const format = (n) => "Rp" + new Intl.NumberFormat("id-ID").format(n);
-  
-  // Terapkan batas kuota PRO: maksimal 60 transaksi pertama untuk e-Statement PDF
-  const limitTx = window.rawTransactions.slice(0, 60);
-  let limitNotice = "";
-  if (window.rawTransactions.length > 60) {
-     limitNotice = `<div style="background:#fff3cd; color:#856404; padding:12px; border-radius:8px; margin-bottom:20px; font-size:14px; text-align:center; font-weight:500;">
-       ⚠️ Catatan: Dokumen ini dibatasi hingga 60 transaksi pertama di bulan ini untuk paket RantauFlow PRO.
-     </div>`;
-  }
-  
-  let tableRows = limitTx.map(tx => {
-    let date = new Date(tx.created_at).toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
-    let color = tx.type === 'expense' ? '#ef4444' : '#10b981';
-    let prefix = tx.type === 'expense' ? '-' : '+';
-    return `
-      <tr style="border-bottom: 1px solid #e2e8f0; font-size: 14px;">
-        <td style="padding: 14px 10px; color: #334155;">${date}</td>
-        <td style="padding: 14px 10px; text-transform: capitalize; color: #334155; font-weight: 500;">${tx.category}</td>
-        <td style="padding: 14px 10px; text-transform: capitalize; color: #64748b;">${tx.type}</td>
-        <td style="padding: 14px 10px; text-align: right; color: ${color}; font-weight: 700;">${prefix} ${format(tx.amount)}</td>
-      </tr>
-    `;
-  }).join('');
+      formalReport.innerHTML = `
+        <div style="text-align: center; margin-bottom: 40px;">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #10b981; color: white; border-radius: 12px; font-weight: bold; font-size: 20px; margin-bottom: 16px;">RF</div>
+          <h1 style="margin: 0; color: #0f172a; font-size: 32px; font-weight: 700; letter-spacing: -1px;">RantauFlow PRO</h1>
+          <p style="margin: 6px 0 0 0; color: #64748b; font-size: 15px;">Official e-Statement by A-Tech Labs</p>
+        </div>
+        
+        ${limitNotice}
+        
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 30px;">
+          <div>
+            <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Nama Klien</p>
+            <h3 style="margin: 6px 0 0 0; color: #0f172a; font-size: 20px;">Apif Nofal</h3>
+            <p style="margin: 6px 0 0 0; color: #10b981; font-size: 13px; font-weight: 600; padding: 4px 10px; background: rgba(16,185,129,0.1); border-radius: 6px; display: inline-block;">Premium Member</p>
+          </div>
+          <div style="text-align: right;">
+            <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Total Saldo Akhir</p>
+            <h2 style="margin: 6px 0 0 0; color: #0f172a; font-size: 28px;">${format(window.summaryData.balance || 0)}</h2>
+          </div>
+        </div>
 
-  formalReport.innerHTML = `
-    <div style="text-align: center; margin-bottom: 40px;">
-      <div style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #10b981; color: white; border-radius: 12px; font-weight: bold; font-size: 20px; margin-bottom: 16px;">RF</div>
-      <h1 style="margin: 0; color: #0f172a; font-size: 32px; font-weight: 700; letter-spacing: -1px;">RantauFlow PRO</h1>
-      <p style="margin: 6px 0 0 0; color: #64748b; font-size: 15px;">Official e-Statement by A-Tech Labs</p>
-    </div>
-    
-    ${limitNotice}
-    
-    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 30px;">
-      <div>
-        <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Nama Klien</p>
-        <h3 style="margin: 6px 0 0 0; color: #0f172a; font-size: 20px;">Apif Nofal</h3>
-        <p style="margin: 6px 0 0 0; color: #10b981; font-size: 13px; font-weight: 600; padding: 4px 10px; background: rgba(16,185,129,0.1); border-radius: 6px; display: inline-block;">Premium Member</p>
-      </div>
-      <div style="text-align: right;">
-        <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Total Saldo Akhir</p>
-        <h2 style="margin: 6px 0 0 0; color: #0f172a; font-size: 28px;">${format(window.summaryData.balance || 0)}</h2>
-      </div>
-    </div>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+              <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tanggal</th>
+              <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Kategori</th>
+              <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tipe</th>
+              <th style="padding: 14px 10px; text-align: right; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Nominal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        
+        <div style="margin-top: 60px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+          Dokumen ini digenerate secara otomatis oleh sistem kecerdasan finansial RantauFlow.<br>
+          A-Tech Labs &copy; 2026
+        </div>
+      `;
 
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
-      <thead>
-        <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
-          <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tanggal</th>
-          <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Kategori</th>
-          <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tipe</th>
-          <th style="padding: 14px 10px; text-align: right; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Nominal</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tableRows}
-      </tbody>
-    </table>
-    
-    <div style="margin-top: 60px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-      Dokumen ini digenerate secara otomatis oleh sistem kecerdasan finansial RantauFlow.<br>
-      A-Tech Labs &copy; 2026
-    </div>
-  `;
+      const mainWrapper = document.getElementById('mainWrapper');
+      mainWrapper.appendChild(formalReport);
 
-  const mainWrapper = document.getElementById('mainWrapper');
-  mainWrapper.appendChild(formalReport);
+      const opt = {
+        margin:       0,
+        filename:     'RantauFlow_Statement_PRO.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false, width: 1000, windowWidth: 1000 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      
+      setTimeout(() => {
+        html2pdf().set(opt).from(mainWrapper).save().then(() => {
+          mainWrapper.removeChild(formalReport);
+          document.body.classList.remove('is-printing');
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        });
+      }, 500);
+    }
 
-  const opt = {
-    margin:       0,
-    filename:     'RantauFlow_Statement_PRO.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, logging: false, width: 1000, windowWidth: 1000 },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-  };
-  
-  setTimeout(() => {
-    html2pdf().set(opt).from(mainWrapper).save().then(() => {
-      mainWrapper.removeChild(formalReport);
-      document.body.classList.remove('is-printing');
-      btn.innerHTML = originalText;
-      btn.disabled = false;
-    });
-  }, 500);
-}
+    // ================= FUNGSI CHAT YANG SUDAH DIPERBAIKI =================
+    function addMessageToUI(text, isUser = false) {
+      const chatBox = document.getElementById("chatBox");
+      const msg = document.createElement("div");
+      msg.innerText = text;
+      msg.style.padding = "10px 14px"; msg.style.borderRadius = "12px"; msg.style.fontSize = "14px"; msg.style.maxWidth = "80%"; msg.style.lineHeight = "1.5";
+      if (isUser) { msg.style.alignSelf = "flex-end"; msg.style.background = "var(--text-main)"; msg.style.color = "var(--bg-dark)"; msg.style.fontWeight = "500"; } 
+      else { msg.style.alignSelf = "flex-start"; msg.style.background = "rgba(255,255,255,0.05)"; msg.style.border = "1px solid var(--glass-border)"; msg.style.color = "var(--text-main)"; }
+      chatBox.appendChild(msg); chatBox.scrollTop = chatBox.scrollHeight;
+      return msg;
+    }
 
-// ================= FUNGSI CHAT =================
-function addMessageToUI(text, isUser = false) {
-  const chatBox = document.getElementById("chatBox");
-  const msg = document.createElement("div");
-  msg.innerText = text;
-  msg.style.padding = "10px 14px"; msg.style.borderRadius = "12px"; msg.style.fontSize = "14px"; msg.style.maxWidth = "80%"; msg.style.lineHeight = "1.5";
-  if (isUser) { msg.style.alignSelf = "flex-end"; msg.style.background = "var(--text-main)"; msg.style.color = "var(--bg-dark)"; msg.style.fontWeight = "500"; } 
-  else { msg.style.alignSelf = "flex-start"; msg.style.background = "rgba(255,255,255,0.05)"; msg.style.border = "1px solid var(--glass-border)"; msg.style.color = "var(--text-main)"; }
-  chatBox.appendChild(msg); chatBox.scrollTop = chatBox.scrollHeight;
-  return msg;
-}
+    async function sendData() {
+      const input = document.getElementById("textInput");
+      const text = input.value.trim(); if(!text) return;
+      const selectedWallet = document.getElementById("walletSelect").value;
+      
+      addMessageToUI(text, true); input.value = "";
+      const typing = addMessageToUI("Saving...", false); typing.style.opacity = "0.5";
+      try {
+        const res = await fetch(`${API_URL}/chat`, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" }, 
+            // INI DIA KUNCINYA: Menggunakan nama variabel asli (text, selectedWallet)
+            body: JSON.stringify({ message: text, wallet: selectedWallet, userId: userId }) 
+        });
+        const data = await res.json(); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData();
+      } catch(err) { typing.remove(); const errUI = addMessageToUI("Error jaringan.", false); errUI.style.color = "var(--accent-red)"; }
+    }
 
-async function sendData() {
-  const input = document.getElementById("textInput");
-  const text = input.value.trim(); if(!text) return;
-  // Ambil data dompet yang dipilih untuk diolah di backend nanti
-  const selectedWallet = document.getElementById("walletSelect").value;
-  
-  addMessageToUI(text, true); input.value = "";
-  const typing = addMessageToUI("Saving...", false); typing.style.opacity = "0.5";
-  try {
-    const res = await fetch("/chat", { 
-        method: "POST", 
-        headers: { "Content-Type": "application/json" }, 
-        body: JSON.stringify({ message: pesanKamu, wallet: dompetKamu, userId: localStorage.getItem('rf_user_id') }) 
-    });
-    const data = await res.json(); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData();
-  } catch(err) { typing.remove(); const errUI = addMessageToUI("Error jaringan.", false); errUI.style.color = "var(--accent-red)"; }
-}
+    async function askAI() {
+      const input = document.getElementById("textInput");
+      const text = input.value.trim(); if(!text) return;
+      
+      addMessageToUI(text, true); input.value = "";
+      const typing = addMessageToUI("AI sedang menganalisa...", false); typing.style.opacity = "0.5";
+      try {
+        const res = await fetch(`${API_URL}/chat-ai`, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" }, 
+            // INI DIA KUNCINYA JUGA
+            body: JSON.stringify({ message: text, userId: userId }) 
+        });
+        const data = await res.json(); typing.remove(); addMessageToUI(data.reply, false); loadData();
+      } catch(err) { typing.remove(); const errUI = addMessageToUI("AI Error.", false); errUI.style.color = "var(--accent-red)"; }
+    }
 
-async function askAI() {
-  const input = document.getElementById("textInput");
-  const text = input.value.trim(); if(!text) return;
-  addMessageToUI(text, true); input.value = "";
-  const typing = addMessageToUI("AI sedang menganalisa...", false); typing.style.opacity = "0.5";
-  try {
-    const res = await fetch("/chat-ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: pesanKamu, userId: localStorage.getItem('rf_user_id') }) });
-    const data = await res.json(); typing.remove(); addMessageToUI(data.reply, false); loadData();
-  } catch(err) { typing.remove(); const errUI = addMessageToUI("AI Error.", false); errUI.style.color = "var(--accent-red)"; }
-}
+    function quickAdd(text) { document.getElementById("textInput").value = text; sendData(); }
+    function quickAsk(text) { document.getElementById("textInput").value = text; askAI(); }
 
-function quickAdd(text) { document.getElementById("textInput").value = text; sendData(); }
-function quickAsk(text) { document.getElementById("textInput").value = text; askAI(); }
-
-window.onload = loadData;
+    window.onload = loadData;
 </script>
 
 </body>
