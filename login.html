@@ -1,299 +1,150 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#070B14">
-  <link rel="manifest" href="/manifest.json">
-  
-  <title>RantauFlow - Access</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg-dark: #070B14;
-      --glass-bg: rgba(255, 255, 255, 0.03);
-      --glass-border: rgba(255, 255, 255, 0.06);
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --accent-green: #34D399;
-      --accent-blue: #38BDF8;
-      --accent-red: #F87171;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 40%),
-        radial-gradient(circle at bottom left, rgba(52, 211, 153, 0.05), transparent 40%);
-      color: var(--text-main);
-      padding: 20px; /* Memberi jarak agar card tidak mentok pinggir di HP */
-    }
-
-    /* GLASS CARD */
-    .glass-card {
-      width: 100%;
-      max-width: 420px;
-      padding: 48px 40px;
-      border-radius: 24px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 24px 40px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      position: relative;
-    }
-
-    /* LOGO */
-    .logo-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 32px;
-    }
-
-    .logo-box {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: rgba(52, 211, 153, 0.1);
-      border: 1px solid rgba(52, 211, 153, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent-green);
-      font-weight: 700;
-      font-size: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 0 20px rgba(52, 211, 153, 0.1);
-    }
-
-    .brand {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    .sub {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 6px;
-    }
-
-    /* FORM & INPUT */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--glass-border);
-      color: var(--text-main);
-      font-size: 16px; /* Wajib 16px agar iOS Safari tidak auto-zoom */
-      transition: all 0.3s ease;
-      outline: none;
-    }
-
-    input::placeholder {
-      color: var(--text-muted);
-    }
-
-    input:focus {
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
-    }
-
-    /* BUTTON */
-    button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--bg-dark);
-      background: var(--text-main);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      min-height: 52px; /* Pas untuk ukuran jempol */
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
-    }
-
-    button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* LINKS & MESSAGES */
-    .auth-links {
-      margin-top: 24px;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .auth-links a {
-      color: var(--accent-blue);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease;
-      cursor: pointer;
-    }
-
-    .auth-links a:hover {
-      color: #7DD3FC;
-    }
-
-    #msg {
-      margin-top: 16px;
-      font-size: 14px;
-      font-weight: 500;
-      min-height: 20px;
-    }
-
-    /* ========================================================
-    MOBILE-FIRST CSS (Media Queries)
-    ======================================================== */
-    @media screen and (max-width: 480px) {
-      .glass-card {
-        padding: 40px 24px; /* Mengurangi padding agar form lebih luas di layar sempit */
-        border-radius: 20px;
-      }
-      .brand {
-        font-size: 22px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RantauFlow</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: #1e293b; padding: 40px; border-radius: 16px; width: 100%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
+        .logo { width: 50px; height: 50px; background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #10b981; font-weight: bold; font-size: 20px; margin: 0 auto 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; outline: none; }
+        .password-container { position: relative; width: 100%; }
+        .eye-icon { position: absolute; right: 12px; top: 12px; cursor: pointer; font-size: 16px; user-select: none; }
+        button { width: 100%; padding: 12px; background: #f8fafc; color: #0f172a; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 10px; }
+        .link { font-size: 12px; color: #94a3b8; margin-top: 15px; display: block; }
+        .link a { color: #38bdf8; text-decoration: none; cursor: pointer; }
+        #msg { color: #ef4444; font-size: 12px; margin-top: 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        .modal-content { background: #1e293b; padding: 30px; border-radius: 12px; width: 90%; max-width: 300px; text-align: center; }
+    </style>
 </head>
 <body>
 
-  <div class="glass-card">
-    <div class="logo-wrap">
-      <div class="logo-box">RF</div>
-      <div class="brand">RantauFlow</div>
-      <div class="sub">Intelligent Financial System</div>
+<div class="login-box">
+    <div class="logo">RF</div>
+    <h2 style="margin:0 0 5px; font-size: 20px;">RantauFlow</h2>
+    <p style="margin: 0 0 25px; font-size: 12px; color: #94a3b8;">Intelligent Financial System</p>
+    
+    <input type="email" id="email" placeholder="Email Anda" required>
+    
+    <!-- Fitur Mata Password -->
+    <div class="password-container">
+        <input type="password" id="password" placeholder="Password" required>
+        <span class="eye-icon" onclick="togglePassword('password', this)">👁️</span>
     </div>
+    
+    <button onclick="login()">Access Account</button>
+    <button onclick="register()" style="background: transparent; color: white; border: 1px solid #334155;">Buat Akun Baru</button>
+    
+    <!-- Fitur Lupa Password -->
+    <span class="link"><a onclick="showModal()">Lupa Password?</a></span>
+    
+    <div id="msg"></div>
+</div>
 
-    <div class="form-group">
-      <input id="email" type="email" placeholder="Email address" autocomplete="off" />
-      <input id="password" type="password" placeholder="Password" />
+<!-- Modal Lupa Password -->
+<div class="modal" id="forgotModal">
+    <div class="modal-content">
+        <h3>Reset Password</h3>
+        <input type="email" id="resetEmail" placeholder="Masukkan Email Terdaftar">
+        <button onclick="requestOTP()">Kirim Kode OTP</button>
+        
+        <div id="otpSection" style="display:none; margin-top: 15px;">
+            <input type="text" id="otpCode" placeholder="Masukkan 6 Digit OTP">
+            <div class="password-container">
+                <input type="password" id="newPassword" placeholder="Password Baru">
+                <span class="eye-icon" onclick="togglePassword('newPassword', this)">👁️</span>
+            </div>
+            <button onclick="resetPassword()" style="background: #10b981; color: white;">Simpan Password Baru</button>
+        </div>
+        <span class="link"><a onclick="hideModal()">Batal</a></span>
+        <div id="modalMsg" style="color: #ef4444; font-size: 12px; margin-top: 10px;"></div>
     </div>
+</div>
 
-    <button id="actionBtn" onclick="loginUser()">Access Account</button>
+<script>
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' : '';
 
-    <div class="auth-links">
-      Belum punya akun? <a onclick="registerUser()">Daftar Sekarang</a>
-    </div>
-
-    <p id="msg"></p>
-  </div>
-
-  <script>
-    const btn = document.getElementById("actionBtn");
-    const msgBox = document.getElementById("msg");
-
-    function showMessage(text, isError = false) {
-      msgBox.innerText = text;
-      msgBox.style.color = isError ? "var(--accent-red)" : "var(--accent-green)";
+    // Fungsi Show/Hide Password (Gambar Mata)
+    function togglePassword(inputId, iconElement) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            iconElement.innerText = "🙈";
+        } else {
+            input.type = "password";
+            iconElement.innerText = "👁️";
+        }
     }
 
-    async function registerUser() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    // Modal Controller
+    function showModal() { document.getElementById('forgotModal').style.display = 'flex'; }
+    function hideModal() { document.getElementById('forgotModal').style.display = 'none'; document.getElementById('otpSection').style.display = 'none'; }
 
-      if (!email || !password) {
-        return showMessage("Email dan password harus diisi.", true);
-      }
+    async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+        const data = await res.json();
+        if (data.success) {
+            localStorage.setItem('rf_user_id', data.userId);
+            localStorage.setItem('rf_is_pro', data.isPro);
+            window.location.href = 'index.html';
+        } else { document.getElementById('msg').innerText = data.message; }
+    }
 
-      btn.disabled = true;
-      btn.innerText = "Membuat Akun...";
-      msgBox.innerText = "";
-
-      try {
-        const res = await fetch("/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
+    async function register() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msgBox = document.getElementById('msg');
+        msgBox.innerText = "Memproses...";
+        
+        const res = await fetch(`${API_URL}/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
         const data = await res.json();
         
         if (data.success) {
-          showMessage("Akun berhasil dibuat! Silakan Access Account.");
-        } else {
-          showMessage("Gagal membuat akun. Email mungkin sudah terdaftar.", true);
+            msgBox.style.color = "#10b981";
+            msgBox.innerText = "Akun berhasil dibuat! Silakan klik Access Account.";
+        } else { 
+            msgBox.style.color = "#ef4444";
+            // KITA TAMPILKAN ERROR ASLINYA DI SINI
+            msgBox.innerText = "Gagal: " + data.message; 
+            alert("Sistem menangkap error: " + data.message); // Alert paksa agar kamu pasti baca
         }
-      } catch (error) {
-        showMessage("Terjadi kesalahan server.", true);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Access Account";
-      }
     }
 
-    async function loginUser() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!email || !password) {
-        return showMessage("Email dan password harus diisi.", true);
-      }
-
-      btn.disabled = true;
-      btn.innerText = "Mengautentikasi...";
-      msgBox.innerText = "";
-
-      try {
-        const res = await fetch("/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
+    async function requestOTP() {
+        const email = document.getElementById('resetEmail').value;
+        document.getElementById('modalMsg').innerText = "Mengirim...";
+        const res = await fetch(`${API_URL}/forgot-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
         const data = await res.json();
-
-        if (data.success) {
-          // Menyimpan userId dan status Pro ke localStorage agar terbaca di index.html
-          localStorage.setItem("userId", data.userId);
-          localStorage.setItem("isPro", data.isPro || "0"); 
-          
-          showMessage("Berhasil masuk. Mengarahkan...");
-          setTimeout(() => { window.location = "index.html"; }, 800);
+        if(data.success) {
+            document.getElementById('modalMsg').style.color = "#10b981";
+            document.getElementById('modalMsg').innerText = "OTP terkirim ke email Anda!";
+            document.getElementById('otpSection').style.display = 'block';
         } else {
-          showMessage("Kredensial salah atau tidak ditemukan.", true);
-          btn.disabled = false;
-          btn.innerText = "Access Account";
+            document.getElementById('modalMsg').style.color = "#ef4444";
+            document.getElementById('modalMsg').innerText = data.message;
         }
-      } catch (error) {
-        showMessage("Terjadi kesalahan server. Coba lagi.", true);
-        btn.disabled = false;
-        btn.innerText = "Access Account";
-      }
     }
-  </script>
 
+    async function resetPassword() {
+        const email = document.getElementById('resetEmail').value;
+        const otp = document.getElementById('otpCode').value;
+        const newPassword = document.getElementById('newPassword').value;
+        
+        const res = await fetch(`${API_URL}/reset-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, otp, newPassword }) });
+        const data = await res.json();
+        if(data.success) {
+            alert("Password berhasil direset! Silakan login kembali.");
+            hideModal();
+        } else {
+            document.getElementById('modalMsg').style.color = "#ef4444";
+            document.getElementById('modalMsg').innerText = data.message;
+        }
+    }
+</script>
 </body>
 </html>

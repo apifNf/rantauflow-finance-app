@@ -9,6 +9,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+const nodemailer = require("nodemailer");
+
+// Konfigurasi Pengirim Email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'emailkamu@gmail.com', // Nanti diisi di Hostinger
+    pass: process.env.EMAIL_PASS || 'passwordaplikasi'     // Nanti diisi di Hostinger
+  }
+});
+
 // ================= SETUP MIDTRANS =================
 const snap = new midtransClient.Snap({
   isProduction: false,
@@ -105,12 +116,16 @@ app.post("/api/payment-notification", async (req, res) => {
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.json({ success: false, message: "Data tidak lengkap" });
-  if (!db) return res.json({ success: false, message: "Server sedang bersiap, coba 5 detik lagi." });
+  if (!db) return res.json({ success: false, message: "Server sedang bersiap." });
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     db.run("INSERT INTO users(email, password, is_pro) VALUES(?, ?, 0)", [email, hashedPassword], function (err) {
-      if (err) return res.json({ success: false, message: "Email sudah terdaftar" });
+      if (err) {
+        console.error("DB Error Detail:", err.message);
+        // BONGKAR ERROR ASLINYA KE USER:
+        return res.json({ success: false, message: err.message });
+      }
       res.json({ success: true, userId: this.lastID, isPro: 0 });
     });
   } catch (err) { res.json({ success: false, message: "Server error" }); }
@@ -128,6 +143,54 @@ app.post("/login", (req, res) => {
       else res.json({ success: false, message: "Password salah" });
     } catch (err) { res.json({ success: false }); }
   });
+});
+
+// ================= LUPA PASSWORD & OTP =================
+app.post("/forgot-password", (req, res) => {
+    const { email } = req.body;
+    if (!db) return res.json({ success: false, message: "Database error" });
+
+    db.get("SELECT id FROM users WHERE email = ?", [email], (err, row) => {
+        if (!row) return res.json({ success: false, message: "Email tidak terdaftar" });
+        
+        // Bikin 6 digit angka random
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        // Simpan OTP sementara (karena kita gak bikin tabel baru, simpan di cache nodejs aja dulu biar cepat)
+        app.locals[email] = { otp: otpCode, expired: Date.now() + (15 * 60000) }; // Aktif 15 menit
+
+        const mailOptions = {
+            from: 'RantauFlow Security',
+            to: email,
+            subject: 'Kode Reset Password RantauFlow',
+            text: `Kode OTP Anda adalah: ${otpCode}. Kode ini berlaku selama 15 menit.`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.json({ success: false, message: "Gagal mengirim email OTP. Pastikan setting Email di Hostinger benar." });
+            }
+            res.json({ success: true, message: "OTP Terkirim!" });
+        });
+    });
+});
+
+app.post("/reset-password", async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+    const session = app.locals[email];
+
+    if (!session || session.otp !== otp) return res.json({ success: false, message: "OTP Salah atau Expired!" });
+    if (Date.now() > session.expired) return res.json({ success: false, message: "OTP Kadaluarsa!" });
+
+    try {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        db.run("UPDATE users SET password = ? WHERE email = ?", [hashedPassword, email], (err) => {
+            if (err) return res.json({ success: false, message: "Gagal update password" });
+            delete app.locals[email]; // Hapus OTP setelah sukses
+            res.json({ success: true, message: "Password berhasil diubah" });
+        });
+    } catch (error) { res.json({ success: false, message: "Server error" }); }
 });
 
 app.post("/chat", (req, res) => {
