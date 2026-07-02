@@ -324,23 +324,41 @@
 </div>
 
 <script>
-window.rawTransactions = [];
-window.summaryData = {};
+// ================== PENGATURAN GLOBAL (TARUH DI PALING ATAS) ==================
+    // Kita taruh di luar function agar semua fitur (chat, tambah data) bisa memakainya
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
+    const userId = localStorage.getItem('rf_user_id');
 
-async function loadData() {
-  try {
-    const userId = localStorage.getItem("userId");
-    // Jika tidak ada user ID (belum login), tendang ke halaman login
+    // ================== SATPAM UTAMA (KITA JINAKKAN SEMENTARA) ==================
     if (!userId) {
-      window.location = "login.html";
-      return;
+        console.error("Peringatan: Sistem kehilangan userId! Tapi saya tahan agar tidak pindah halaman.");
+        // window.location.href = 'login.html'; // KODE TENDANGAN KITA MATIKAN SEMENTARA DENGAN GARIS MIRING
     }
 
-    const isPro = localStorage.getItem("isPro");
-    if (isPro === "1") {
-      document.getElementById("proBadge").style.display = "inline-block";
-      document.getElementById("limitBanner").style.display = "none";
-    }
+    window.rawTransactions = [];
+    window.summaryData = {};
+
+    async function loadData() {
+        if (!userId) return; // Hentikan proses jika memori user benar-benar kosong
+
+        try {
+            const isPro = localStorage.getItem("rf_is_pro");
+            if (isPro === "1") {
+                const proBadge = document.getElementById("proBadge");
+                const limitBanner = document.getElementById("limitBanner");
+                if (proBadge) proBadge.style.display = "inline-block";
+                if (limitBanner) limitBanner.style.display = "none";
+            }
+
+            // Ambil data dari server (API_URL dan userId sekarang otomatis terbaca dari Global)
+            const res = await fetch(`${API_URL}/summary?userId=${userId}`);
+            const data = await res.json();
+
+            // Jika API membalas error, JANGAN di-redirect, cukup tampilkan di console log
+            if (data.error) {
+                console.error("Error Data API:", data.error);
+                return; 
+            }
 
     // FIX: Sisipkan ?userId=${userId} ke setiap URL fetch
     const insight = await fetch(`/insight?userId=${userId}`).then(r=>r.json());
