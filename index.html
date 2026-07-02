@@ -642,7 +642,7 @@ async function sendData() {
     const res = await fetch("/chat", { 
         method: "POST", 
         headers: { "Content-Type": "application/json" }, 
-        body: JSON.stringify({ message: text, wallet: selectedWallet, userId: localStorage.getItem("userId") }) 
+        body: JSON.stringify({ message: pesanKamu, wallet: dompetKamu, userId: localStorage.getItem('rf_user_id') }) 
     });
     const data = await res.json(); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData();
   } catch(err) { typing.remove(); const errUI = addMessageToUI("Error jaringan.", false); errUI.style.color = "var(--accent-red)"; }
@@ -654,7 +654,7 @@ async function askAI() {
   addMessageToUI(text, true); input.value = "";
   const typing = addMessageToUI("AI sedang menganalisa...", false); typing.style.opacity = "0.5";
   try {
-    const res = await fetch("/chat-ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text, userId: localStorage.getItem("userId") }) });
+    const res = await fetch("/chat-ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: pesanKamu, userId: localStorage.getItem('rf_user_id') }) });
     const data = await res.json(); typing.remove(); addMessageToUI(data.reply, false); loadData();
   } catch(err) { typing.remove(); const errUI = addMessageToUI("AI Error.", false); errUI.style.color = "var(--accent-red)"; }
 }
