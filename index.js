@@ -4,6 +4,7 @@ const path = require('path');
 const bcrypt = require("bcrypt");
 const midtransClient = require("midtrans-client");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
 
 const app = express();
 app.use(cors());
@@ -26,20 +27,43 @@ const snap = new midtransClient.Snap({
   clientKey: process.env.MIDTRANS_CLIENT_KEY || 'RAHASIA_DI_HOSTINGER'
 });
 
-// ================= DATABASE INIT (LANGSUNG NYALA) =================
-const sqlite3 = require("sqlite3").verbose();
-const dbPath = path.join(__dirname, 'database.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error("Gagal memuat file database:", err.message);
-    } else {
-        console.log("Database SQLite terhubung dan siap digunakan.");
-        db.serialize(() => {
-            db.run(`CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT, is_pro INTEGER DEFAULT 0)`);
-            db.run(`CREATE TABLE IF NOT EXISTS transactions(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, amount INTEGER, type TEXT, category TEXT, wallet TEXT DEFAULT 'utama', created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`);
-            db.run(`ALTER TABLE users ADD COLUMN is_pro INTEGER DEFAULT 0`, (err) => {});
-            db.run(`ALTER TABLE transactions ADD COLUMN wallet TEXT DEFAULT 'utama'`, (err) => {});
+// ================= VARIABEL GLOBAL =================
+let db;
+let dbStatus = "Sedang menghubungkan ke sistem...";
+
+// ================= FASE 1: BUKA PINTU SERVER (ANTI 503) =================
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SUKSES] Server RantauFlow hidup di port ${PORT}`);
+
+    // ================= FASE 2: INISIALISASI DATABASE =================
+    try {
+        const sqlite3 = require("sqlite3").verbose();
+        const dbPath = path.join(__dirname, 'database.db');
+        
+        // TRIK HOSTINGER: Buat file kosong paksa jika belum ada untuk mengatasi masalah izin (Permission)
+        if (!fs.existsSync(dbPath)) {
+            fs.writeFileSync(dbPath, ""); 
+        }
+
+        db = new sqlite3.Database(dbPath, (err) => {
+            if (err) {
+                dbStatus = "Error Buka DB: " + err.message;
+                console.error(dbStatus);
+            } else {
+                dbStatus = "OK";
+                console.log("[SUKSES] Database SQLite siap.");
+                db.serialize(() => {
+                    db.run(`CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT, is_pro INTEGER DEFAULT 0)`);
+                    db.run(`CREATE TABLE IF NOT EXISTS transactions(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, amount INTEGER, type TEXT, category TEXT, wallet TEXT DEFAULT 'utama', created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`);
+                    db.run(`ALTER TABLE users ADD COLUMN is_pro INTEGER DEFAULT 0`, (err) => {});
+                    db.run(`ALTER TABLE transactions ADD COLUMN wallet TEXT DEFAULT 'utama'`, (err) => {});
+                });
+            }
         });
+    } catch (error) {
+        dbStatus = "Crash Modul SQLite: " + error.message;
+        console.error(dbStatus);
     }
 });
 
@@ -68,37 +92,42 @@ function parseMessage(text) {
   return { amount, type, category };
 }
 
-// ================= ENDPOINT API =================
+// ================= SEMUA ENDPOINT API =================
 
 app.get("/", (req, res) => { res.send("RantauFlow API Running Perfectly"); });
 
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.json({ success: false, message: "Data tidak lengkap" });
+  if (!db || dbStatus !== "OK") return res.json({ success: false, message: dbStatus });
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     db.run("INSERT INTO users(email, password, is_pro) VALUES(?, ?, 0)", [email, hashedPassword], function (err) {
-      if (err) return res.json({ success: false, message: "Error DB: " + err.message });
+      if (err) return res.json({ success: false, message: "Gagal Tulis DB: " + err.message });
       res.json({ success: true, userId: this.lastID, isPro: 0 });
     });
-  } catch (err) { res.json({ success: false, message: "Server error" }); }
+  } catch (err) { res.json({ success: false, message: "Server error hash" }); }
 });
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
+  if (!db || dbStatus !== "OK") return res.json({ success: false, message: dbStatus });
+
   db.get("SELECT * FROM users WHERE email = ?", [email], async (err, row) => {
     if (err || !row) return res.json({ success: false, message: "Email tidak ditemukan atau salah" });
     try {
       const match = await bcrypt.compare(password, row.password);
       if (match) res.json({ success: true, userId: row.id, isPro: row.is_pro });
       else res.json({ success: false, message: "Password salah" });
-    } catch (err) { res.json({ success: false }); }
+    } catch (err) { res.json({ success: false, message: "Error validasi password" }); }
   });
 });
 
 app.post("/forgot-password", (req, res) => {
     const { email } = req.body;
+    if (!db || dbStatus !== "OK") return res.json({ success: false, message: dbStatus });
+
     db.get("SELECT id FROM users WHERE email = ?", [email], (err, row) => {
         if (!row) return res.json({ success: false, message: "Email tidak terdaftar" });
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -113,8 +142,9 @@ app.post("/forgot-password", (req, res) => {
 
 app.post("/reset-password", async (req, res) => {
     const { email, otp, newPassword } = req.body;
+    if (!db || dbStatus !== "OK") return res.json({ success: false, message: dbStatus });
     const session = app.locals[email];
-    if (!session || session.otp !== otp) return res.json({ success: false, message: "OTP Salah atau Expired!" });
+    if (!session || session.otp !== otp) return res.json({ success: false, message: "OTP Salah atau Kadaluarsa!" });
     if (Date.now() > session.expired) return res.json({ success: false, message: "OTP Kadaluarsa!" });
 
     try {
@@ -124,11 +154,12 @@ app.post("/reset-password", async (req, res) => {
             delete app.locals[email]; 
             res.json({ success: true, message: "Password berhasil diubah" });
         });
-    } catch (error) { res.json({ success: false, message: "Server error" }); }
+    } catch (error) { res.json({ success: false, message: "Server error reset" }); }
 });
 
 app.post("/api/checkout", async (req, res) => {
   const { userId } = req.body;
+  if (!db || dbStatus !== "OK") return res.status(500).json({ success: false, message: dbStatus });
   db.get("SELECT email FROM users WHERE id = ?", [userId], async (err, row) => {
     if (err || !row) return res.status(500).json({ success: false, message: "User tidak ditemukan" });
     const parameter = {
@@ -149,7 +180,7 @@ app.post("/api/payment-notification", async (req, res) => {
     const orderId = statusResponse.order_id;
     const userId = orderId.split('-')[2];
     if ((statusResponse.transaction_status === 'capture' || statusResponse.transaction_status === 'settlement') && (statusResponse.fraud_status === 'accept' || !statusResponse.fraud_status)) {
-      db.run("UPDATE users SET is_pro = 1 WHERE id = ?", [userId]);
+      if(db && dbStatus === "OK") db.run("UPDATE users SET is_pro = 1 WHERE id = ?", [userId]);
     }
     res.status(200).send("OK");
   } catch (error) { res.status(500).send("Server Error"); }
@@ -158,6 +189,8 @@ app.post("/api/payment-notification", async (req, res) => {
 app.post("/chat", (req, res) => {
   const { message, wallet, userId } = req.body;
   if (!userId) return res.json({ message: "User belum login" });
+  if (!db || dbStatus !== "OK") return res.json({ message: "Database offline: " + dbStatus });
+
   const parsed = parseMessage(message);
   if (!parsed.amount) return res.json({ message: "Gue ga ngerti nominalnya bro 😅" });
   if (parsed.category === "allowance") return res.json({ message: `🍜 Tunjangan/Uang makan masuk sebesar Rp${parsed.amount.toLocaleString("id-ID")}` });
@@ -171,7 +204,10 @@ app.post("/chat", (req, res) => {
 app.post("/chat-ai", (req, res) => {
   const { message, userId } = req.body;
   if (!userId) return res.json({ reply: "Login dulu bro." });
+  if (!db || dbStatus !== "OK") return res.json({ reply: "Database offline: " + dbStatus });
+
   db.all("SELECT * FROM transactions WHERE user_id = ?", [userId], (err, rows) => {
+    if(err) return res.json({ reply: "Error baca data." });
     let income = 0; let expense = 0;
     rows.forEach(tx => { if (tx.type === "income") income += tx.amount; if (tx.type === "expense") expense += tx.amount; });
     const balance = income - expense;
@@ -183,7 +219,7 @@ app.post("/chat-ai", (req, res) => {
 
 app.get('/summary', (req, res) => {
   const userId = req.query.userId;
-  if (!userId) return res.json({ error: "Unauthorized" });
+  if (!userId || !db || dbStatus !== "OK") return res.json({ error: "Unauthorized / DB Offline" });
   db.all('SELECT * FROM transactions WHERE user_id = ?', [userId], (err, rows) => {
     if (err) return res.json({ error: err.message });
     let income = 0; let expense = 0;
@@ -194,13 +230,9 @@ app.get('/summary', (req, res) => {
 
 app.get("/insight", (req, res) => {
   const userId = req.query.userId;
+  if(!userId || !db || dbStatus !== "OK") return res.json({ income: 0, expense: 0, balance: 0, insight: ["Loading..."] });
   db.get(`SELECT SUM(CASE WHEN type='income' THEN amount ELSE 0 END) as income, SUM(CASE WHEN type='expense' THEN amount ELSE 0 END) as expense FROM transactions WHERE user_id=?`, [userId], (err, row) => {
     const income = row?.income || 0; const expense = row?.expense || 0;
     res.json({ income, expense, balance: (income - expense), insight: ["✅ Stabil"] });
   });
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[SUKSES] Server RantauFlow berhasil buka gerbang di port ${PORT}`);
 });
