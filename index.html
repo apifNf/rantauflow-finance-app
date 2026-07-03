@@ -254,8 +254,11 @@
 
             const summary = await fetch(`${API_URL}/summary?userId=${userId}`).then(r=>r.json());
             
+            // JIKA MYSQL ERROR, TAMPILKAN POP-UP DAN TENDANG KE HALAMAN LOGIN
             if (summary.error) {
-                console.error("Error Data API:", summary.error);
+                alert("LAPORAN ERROR SERVER: " + summary.error);
+                localStorage.removeItem('rf_user_id'); // Hapus ingatan hantu
+                window.location.href = 'login.html';   // Usir ke halaman login
                 return; 
             }
 
