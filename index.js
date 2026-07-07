@@ -95,12 +95,10 @@ function parseMessage(text) {
   text = (text || "").toLowerCase();
   let amount = 0; let category = "other"; let type = "expense";
   
-  // REGEX BARU: Sekarang AI bisa membaca titik (.) maupun koma (,)
+  // REGEX BARU: Membaca titik (.) maupun koma (,)
   const match = text.match(/(\$)?(\d+(?:[.,]\d+)?)\s?(k|jt)?\b/i);
   if (match) {
     const isDollar = match[1] === "$"; 
-    
-    // JS butuh titik untuk desimal, jadi kita ubah koma menjadi titik secara otomatis
     let parsedNumber = parseFloat(match[2].replace(',', '.'));
     
     amount = parsedNumber;
@@ -109,17 +107,37 @@ function parseMessage(text) {
     if (isDollar) amount *= 16300; 
   }
   
-  // Deteksi Jargon Trading & Investasi
+  // DATABASE KATA KUNCI ASET (Crypto, Saham, & Bursa/Exchange)
+  const cryptoAssets = ["bitcoin", "btc", "ethereum", "eth", "solana", "sol", "doge", "usdt", "xrp", "pepe", "bnb", "ton"];
+  const stockAssets = ["bbca", "bbri", "bmri", "bbni", "goto", "tlkm", "asii", "reksadana", "obligasi", "saham"];
+  const exchanges = ["indodax", "mexc", "okx", "bybit", "binance", "cryptoinside"];
+  
+  // Cek apakah kalimat mengandung salah satu dari aset/bursa di atas
+  const isInvestment = cryptoAssets.some(kw => text.includes(kw)) || 
+                       stockAssets.some(kw => text.includes(kw)) || 
+                       exchanges.some(kw => text.includes(kw));
+  
+  // LOGIKA KATEGORISASI
   if (text.includes("fomo") || text.includes("memecoin") || text.includes("shitcoin") || text.includes("koin micin") || text.includes("sangkut")) { type = "expense"; category = "investment"; }
   else if (text.includes("liquid") || text.includes("mc") || text.includes("margin call") || text.includes("futures") || text.includes("loss") || text.includes("cutloss") || text.includes("rugi") || text.includes("boncos")) { type = "expense"; category = "investment"; }
-  else if (text.includes("profit") || text.includes("cuan") || text.includes("tp") || text.includes("take profit") || text.includes("wd") || text.includes("withdraw")) { type = "income"; category = "investment"; } 
-  else if (text.includes("crypto") || text.includes("forex") || text.includes("saham") || text.includes("invest") || text.includes("beli koin")) { type = "expense"; category = "investment"; } 
+  else if (text.includes("profit") || text.includes("cuan") || text.includes("tp") || text.includes("take profit") || text.includes("wd") || text.includes("withdraw") || text.includes("dividen")) { type = "income"; category = "investment"; } 
+  // JIKA TERDETEKSI NAMA ASET / EXCHANGE SPESIFIK
+  else if (isInvestment || text.includes("crypto") || text.includes("forex") || text.includes("invest") || text.includes("beli koin") || text.includes("depo")) { 
+      // Deteksi aksi: Jual atau Beli
+      if (text.includes("jual") || text.includes("sell") || text.includes("cair")) {
+          type = "income"; // Jual aset = uang masuk ke dompet cash
+      } else {
+          type = "expense"; // Beli / Depo = uang cash keluar (berubah jadi aset)
+      }
+      category = "investment"; 
+  } 
   else if (text.includes("tabung") || text.includes("nabung") || text.includes("save")) { type = "saving"; category = "saving"; } 
   else if (text.includes("gaji") || text.includes("bonus") || text.includes("masuk")) { type = "income"; category = "salary"; } 
   else if (text.includes("uang makan") || text.includes("meal allowance")) { type = "income"; category = "allowance"; } 
   else if (text.includes("party") || text.includes("club") || text.includes("nongkrong") || text.includes("bar") || text.includes("judi") || text.includes("slot")) { type = "expense"; category = "lifestyle"; } 
-  else if (text.includes("grab") || text.includes("taxi")) { type = "expense"; category = "transport"; } 
+  else if (text.includes("grab") || text.includes("taxi") || text.includes("gojek") || text.includes("passapp")) { type = "expense"; category = "transport"; } 
   else if (text.includes("makan") || text.includes("kopi")) { category = "food"; }
+  
   return { amount, type, category };
 }
 
