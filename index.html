@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#070B14">
   <link rel="manifest" href="/manifest.json">
   
-  <title>RantauFlow Pro Dashboard</title>
+  <title>RantauFlow Enterprise Dashboard</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,10 +65,14 @@
 
     .chip { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s ease; }
 
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { max-width: 420px; width: 90%; text-align: center; transform: translateY(20px); transition: transform 0.3s ease; }
+    .modal-content { max-width: 600px; width: 90%; text-align: center; transform: translateY(20px); transition: transform 0.3s ease; }
     .modal-overlay.active .modal-content { transform: translateY(0); }
+
+    /* Custom List styling for Paywall */
+    .paywall-list { font-size: 13px; color: var(--text-main); padding-left: 0; list-style: none; margin-bottom: 20px; line-height: 1.8; text-align: left; }
+    .paywall-list li::before { content: "✓"; color: var(--accent-green); font-weight: bold; margin-right: 8px; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -94,7 +98,7 @@
     
     <div id="limitBanner" style="display: none; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--accent-red); padding: 12px 16px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; line-height: 1.5;">
       ⚠️ Sisa kuota catatan gratis bulan ini: <strong id="quotaCount">--</strong> transaksi. <br>
-      <a href="#" onclick="checkPremiumAccess('limit')" style="color: var(--accent-blue); text-decoration: underline; font-weight: bold; margin-left: 4px; display: inline-block; margin-top: 4px;">Upgrade Pro (Rp 9.900)</a>
+      <a href="#" onclick="checkPremiumAccess('limit')" style="color: var(--accent-blue); text-decoration: underline; font-weight: bold; margin-left: 4px; display: inline-block; margin-top: 4px;">Upgrade Pro (Mulai Rp 9.900)</a>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;" data-html2canvas-ignore>
@@ -165,7 +169,7 @@
           </select>
           
           <div class="action-buttons" style="display:flex; gap:12px;">
-            <input id="textInput" class="premium-input" placeholder="contoh: makan 20k atau roast gue" autocomplete="off">
+            <input id="textInput" class="premium-input" placeholder="contoh: fomo memecoin 500k atau roast gue" autocomplete="off">
             <button id="sendBtn" onclick="sendData()" class="btn btn-primary">Kirim</button>
             <button id="aiBtn" onclick="askAI()" class="btn btn-outline">Tanya AI</button>
           </div>
@@ -213,15 +217,41 @@
 
 <div id="paywallModal" class="modal-overlay" data-html2canvas-ignore>
   <div class="modal-content glass-card">
-    <div style="width:50px; height:50px; border-radius:50%; background:rgba(56, 189, 248, 0.1); color:var(--accent-blue); display:flex; align-items:center; justify-content:center; font-size:24px; margin: 0 auto 16px auto;">🔒</div>
-    <h2 style="color: var(--text-main); margin-bottom: 12px; letter-spacing: -0.5px;">Upgrade ke PRO</h2>
+    <h2 style="color: var(--text-main); margin-bottom: 8px; letter-spacing: -0.5px;">Upgrade ke Premium</h2>
     <p id="paywallText" style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6;">
-      Fitur ini khusus pengguna RantauFlow PRO.
+      Pilih paket yang sesuai dengan kebutuhan finansial Anda.
     </p>
-    <div class="flex-col" style="gap: 10px;">
-      <button class="btn btn-accent" style="width: 100%;" onclick="alert('System Midtrans Checkout akan diintegrasikan di sini!')">Upgrade Sekarang (Rp 9.900)</button>
-      <button onclick="closeModal()" class="btn btn-outline" style="width: 100%;">Mungkin Nanti</button>
+
+    <div class="flex-row" style="gap: 16px; margin-bottom: 16px;">
+      
+      <div style="flex: 1; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 20px; text-align: left;">
+        <h3 style="color: var(--accent-blue); margin-bottom: 4px; font-size: 15px;">PRO</h3>
+        <div style="font-size: 22px; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">Rp 9.900<span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">/bln</span></div>
+        <ul class="paywall-list">
+          <li>Transaksi tanpa batas (Unlimited)</li>
+          <li>Kategori & Dompet Custom</li>
+          <li>Export Laporan CSV</li>
+          <li>Unduh e-Statement PDF</li>
+        </ul>
+        <button class="btn btn-outline" style="width: 100%; border-color: var(--glass-border);" onclick="alert('Gateway Pembayaran PRO (Rp9.900) akan segera hadir!')">Pilih PRO</button>
+      </div>
+
+      <div style="flex: 1; background: linear-gradient(145deg, rgba(52, 211, 153, 0.1), rgba(0,0,0,0)); border: 1px solid var(--accent-green); border-radius: 12px; padding: 20px; text-align: left; position: relative;">
+        <div style="position: absolute; top: -10px; right: 15px; background: var(--accent-green); color: var(--bg-dark); font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.5px;">POPULER</div>
+        <h3 style="color: var(--accent-green); margin-bottom: 4px; font-size: 15px;">PRO BIZ</h3>
+        <div style="font-size: 22px; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">Rp 39.000<span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">/bln</span></div>
+        <ul class="paywall-list">
+          <li><strong>Semua fitur dari paket PRO</strong></li>
+          <li><strong>Integrasi Catat via WhatsApp (AI)</strong></li>
+          <li><strong>Proactive Smart Nudges (Roasting)</strong></li>
+          <li>Prioritas Support Customer Service</li>
+        </ul>
+        <button class="btn btn-primary" style="width: 100%; background: var(--accent-green); color: var(--bg-dark);" onclick="alert('Gateway Pembayaran PRO BIZ (Rp39.000) akan segera hadir!')">Pilih BIZ</button>
+      </div>
+
     </div>
+    
+    <button onclick="closeModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 14px; text-decoration: underline; cursor: pointer; padding: 8px;">Nanti saja, tetap pakai gratis.</button>
   </div>
 </div>
 
@@ -231,7 +261,6 @@
 
     if (!userId) {
         console.error("Peringatan: Sistem kehilangan userId! Tapi saya tahan agar tidak pindah halaman.");
-        // window.location.href = 'login.html'; 
     }
 
     window.rawTransactions = [];
@@ -241,11 +270,24 @@
         if (!userId) return; 
 
         try {
-            const isPro = localStorage.getItem("rf_is_pro");
-            if (isPro === "1") {
+            // BACKWARD COMPATIBILITY: Membaca sistem lama (isPro) atau sistem baru (tierLevel)
+            const tierLevel = parseInt(localStorage.getItem("rf_tier_level")) || parseInt(localStorage.getItem("rf_is_pro")) || 0;
+            
+            if (tierLevel >= 1) {
                 const proBadge = document.getElementById("proBadge");
                 const limitBanner = document.getElementById("limitBanner");
-                if (proBadge) proBadge.style.display = "inline-block";
+                
+                if (proBadge) {
+                    proBadge.style.display = "inline-block";
+                    if (tierLevel === 2) {
+                        proBadge.innerText = "PRO BIZ";
+                        proBadge.style.background = "linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.05))";
+                        proBadge.style.borderColor = "rgba(52,211,153,0.4)";
+                        proBadge.style.color = "var(--accent-green)";
+                    } else {
+                        proBadge.innerText = "PRO";
+                    }
+                }
                 if (limitBanner) limitBanner.style.display = "none";
             }
 
@@ -254,18 +296,16 @@
 
             const summary = await fetch(`${API_URL}/summary?userId=${userId}`).then(r=>r.json());
             
-            // JIKA MYSQL ERROR, TAMPILKAN POP-UP DAN TENDANG KE HALAMAN LOGIN
             if (summary.error) {
                 alert("LAPORAN ERROR SERVER: " + summary.error);
-                localStorage.removeItem('rf_user_id'); // Hapus ingatan hantu
-                window.location.href = 'login.html';   // Usir ke halaman login
+                localStorage.removeItem('rf_user_id'); 
+                window.location.href = 'login.html';   
                 return; 
             }
 
             window.rawTransactions = summary.transactions || [];
             window.summaryData = summary; 
 
-            // PENGHITUNGAN KATEGORI & GRAFIK (Tanpa Server - Sangat Cepat!)
             if (window.rawTransactions.length > 0) {
                 let catTotals = {};
                 window.rawTransactions.forEach(tx => {
@@ -289,8 +329,8 @@
                 renderCharts({ data: [] });
             }
 
-            // Fitur Limit 30 Transaksi (Free User)
-            if (isPro !== "1") {
+            // Fitur Limit 30 Transaksi (Khusus Tier 0 / Free User)
+            if (tierLevel === 0) {
               const txCount = window.rawTransactions.length;
               const maxFree = 30;
               let sisa = maxFree - txCount;
@@ -363,7 +403,7 @@
       window.myChartInstance = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: labels.map(l => ({ food:"Makan", transport:"Transport", shopping:"Belanja", lifestyle:"Nongkrong", other:"Lainnya" }[l] || l)),
+          labels: labels.map(l => ({ food:"Makan", transport:"Transport", shopping:"Belanja", lifestyle:"Nongkrong", investment:"Investasi/Trading", other:"Lainnya" }[l] || l)),
           datasets: [{ data: values, borderColor: "#070B14", borderWidth: 4, backgroundColor: ["#34D399", "#38BDF8", "#F87171", "#FBBF24", "#A78BFA"], hoverOffset: 4 }]
         },
         options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: "#94A3B8" } } } }
@@ -381,12 +421,14 @@
     }
 
     function checkPremiumAccess(actionType) {
-      if (localStorage.getItem("rf_is_pro") !== "1") {
-        let msg = "Fitur ini khusus pengguna RantauFlow PRO.";
-        if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus PRO.";
-        if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus PRO.";
-        if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu khusus PRO.";
-        if (actionType === 'limit') msg = "Catat transaksi tanpa batas (unlimited) khusus PRO.";
+      const tierLevel = parseInt(localStorage.getItem("rf_tier_level")) || parseInt(localStorage.getItem("rf_is_pro")) || 0;
+      
+      if (tierLevel < 1) {
+        let msg = "Fitur ini khusus pengguna RantauFlow PRO atau PRO BUSINESS.";
+        if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus pengguna berbayar.";
+        if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus fitur berbayar.";
+        if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu eksklusif di paket berbayar.";
+        if (actionType === 'limit') msg = "Pilih paket langganan di bawah untuk mencatat transaksi tanpa batas (unlimited).";
 
         document.getElementById("paywallText").innerText = msg;
         document.getElementById("paywallModal").classList.add("active");
@@ -529,7 +571,6 @@
       }, 500);
     }
 
-    // ================= FUNGSI CHAT YANG SUDAH DIPERBAIKI =================
     function addMessageToUI(text, isUser = false) {
       const chatBox = document.getElementById("chatBox");
       const msg = document.createElement("div");
@@ -552,7 +593,6 @@
         const res = await fetch(`${API_URL}/chat`, { 
             method: "POST", 
             headers: { "Content-Type": "application/json" }, 
-            // INI DIA KUNCINYA: Menggunakan nama variabel asli (text, selectedWallet)
             body: JSON.stringify({ message: text, wallet: selectedWallet, userId: userId }) 
         });
         const data = await res.json(); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData();
@@ -569,7 +609,6 @@
         const res = await fetch(`${API_URL}/chat-ai`, { 
             method: "POST", 
             headers: { "Content-Type": "application/json" }, 
-            // INI DIA KUNCINYA JUGA
             body: JSON.stringify({ message: text, userId: userId }) 
         });
         const data = await res.json(); typing.remove(); addMessageToUI(data.reply, false); loadData();

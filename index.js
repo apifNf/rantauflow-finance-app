@@ -34,7 +34,6 @@ app.listen(PORT, '0.0.0.0', () => {
 });
 
 // ================= FASE 2: DATABASE CONNECTION POOLING (MYSQL) =================
-// Sistem Pool ini mencegah server down meski ada 1000 user menekan tombol bersamaan
 const pool = mysql.createPool({
     host: process.env.DB_HOST || '127.0.0.1',
     user: process.env.DB_USER || 'root',
@@ -45,18 +44,22 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// Tes Koneksi & Buat Tabel Otomatis
+// Tes Koneksi & Auto-Migrasi Tabel Otomatis
 pool.getConnection((err, connection) => {
     if (err) {
         console.error("[CRITICAL ERROR] Gagal nyambung ke MySQL:", err.message);
     } else {
         console.log("[SUKSES] Database MySQL Enterprise Terhubung! Siap scale-up.");
         
+        // Pembuatan Tabel Dasar
         const createUsers = `CREATE TABLE IF NOT EXISTS users(
             id INT AUTO_INCREMENT PRIMARY KEY, 
             email VARCHAR(255) UNIQUE, 
             password VARCHAR(255), 
-            is_pro TINYINT DEFAULT 0
+            tier_level TINYINT DEFAULT 0,
+            wa_number VARCHAR(20) UNIQUE DEFAULT NULL,
+            affiliate_code VARCHAR(50) UNIQUE DEFAULT NULL,
+            affiliate_balance BIGINT DEFAULT 0
         )`;
         
         const createTransactions = `CREATE TABLE IF NOT EXISTS transactions(
@@ -71,14 +74,27 @@ pool.getConnection((err, connection) => {
 
         connection.query(createUsers);
         connection.query(createTransactions);
+
+        // AUTO-MIGRASI: Cek apakah masih pakai format lama (is_pro), jika ya, ubah otomatis!
+        connection.query("SHOW COLUMNS FROM users LIKE 'is_pro'", (err, results) => {
+            if (results && results.length > 0) {
+                console.log("[MIGRASI] Mengupgrade tabel users ke versi Enterprise (Tier & Affiliate)...");
+                connection.query("ALTER TABLE users CHANGE is_pro tier_level TINYINT DEFAULT 0");
+                connection.query("ALTER TABLE users ADD COLUMN wa_number VARCHAR(20) UNIQUE DEFAULT NULL");
+                connection.query("ALTER TABLE users ADD COLUMN affiliate_code VARCHAR(50) UNIQUE DEFAULT NULL");
+                connection.query("ALTER TABLE users ADD COLUMN affiliate_balance BIGINT DEFAULT 0");
+            }
+        });
+
         connection.release();
     }
 });
 
-// ================= KOSAKATA AI (TRADING & FINANCE) =================
+// ================= KOSAKATA AI SUPER ADVANCED (TRADING DEGEN MODE) =================
 function parseMessage(text) {
   text = (text || "").toLowerCase();
   let amount = 0; let category = "other"; let type = "expense";
+  
   const match = text.match(/(\$)?(\d+)\s?(k|jt)?\b/i);
   if (match) {
     const isDollar = match[1] === "$"; amount = parseInt(match[2]);
@@ -86,19 +102,22 @@ function parseMessage(text) {
     if (match[3] === "jt") amount *= 1000000;
     if (isDollar) amount *= 16300; 
   }
-  if (text.includes("profit") || text.includes("cuan") || text.includes("gain") || text.includes("wd")) { type = "income"; category = "investment"; } 
-  else if (text.includes("rugi") || text.includes("loss") || text.includes("cutloss") || text.includes("boncos") || text.includes("liquid")) { type = "expense"; category = "investment"; } 
+  
+  // Deteksi Jargon Trading & Investasi
+  if (text.includes("fomo") || text.includes("memecoin") || text.includes("shitcoin") || text.includes("koin micin") || text.includes("sangkut")) { type = "expense"; category = "investment"; }
+  else if (text.includes("liquid") || text.includes("mc") || text.includes("margin call") || text.includes("futures") || text.includes("loss") || text.includes("sl") || text.includes("cutloss") || text.includes("rugi") || text.includes("boncos")) { type = "expense"; category = "investment"; }
+  else if (text.includes("profit") || text.includes("cuan") || text.includes("tp") || text.includes("take profit") || text.includes("wd") || text.includes("withdraw")) { type = "income"; category = "investment"; } 
   else if (text.includes("crypto") || text.includes("forex") || text.includes("saham") || text.includes("invest") || text.includes("beli koin")) { type = "expense"; category = "investment"; } 
   else if (text.includes("tabung") || text.includes("nabung") || text.includes("save")) { type = "saving"; category = "saving"; } 
   else if (text.includes("gaji") || text.includes("bonus") || text.includes("masuk")) { type = "income"; category = "salary"; } 
   else if (text.includes("uang makan") || text.includes("meal allowance")) { type = "income"; category = "allowance"; } 
-  else if (text.includes("party") || text.includes("club") || text.includes("nongkrong") || text.includes("bar")) { type = "expense"; category = "lifestyle"; } 
+  else if (text.includes("party") || text.includes("club") || text.includes("nongkrong") || text.includes("bar") || text.includes("judi") || text.includes("slot")) { type = "expense"; category = "lifestyle"; } 
   else if (text.includes("grab") || text.includes("taxi")) { type = "expense"; category = "transport"; } 
   else if (text.includes("makan") || text.includes("kopi")) { category = "food"; }
   return { amount, type, category };
 }
 
-// ================= ENDPOINT API MYSQL =================
+// ================= ENDPOINT AUTENTIKASI (UPGRADED TIER SYSTEM) =================
 app.get("/", (req, res) => { res.send("RantauFlow Enterprise API Running Perfectly"); });
 
 app.post("/register", async (req, res) => {
@@ -107,12 +126,12 @@ app.post("/register", async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    pool.query("INSERT INTO users(email, password, is_pro) VALUES(?, ?, 0)", [email, hashedPassword], (err, result) => {
+    pool.query("INSERT INTO users(email, password, tier_level) VALUES(?, ?, 0)", [email, hashedPassword], (err, result) => {
       if (err) {
         if(err.code === 'ER_DUP_ENTRY') return res.json({ success: false, message: "Email sudah terdaftar" });
         return res.json({ success: false, message: "Gagal buat akun: " + err.message });
       }
-      res.json({ success: true, userId: result.insertId, isPro: 0 });
+      res.json({ success: true, userId: result.insertId, tierLevel: 0 }); // Menggunakan tierLevel
     });
   } catch (err) { res.json({ success: false, message: "Server error hash" }); }
 });
@@ -124,7 +143,10 @@ app.post("/login", (req, res) => {
     const user = results[0];
     try {
       const match = await bcrypt.compare(password, user.password);
-      if (match) res.json({ success: true, userId: user.id, isPro: user.is_pro });
+      // Auto-fallback jika DB masih pakai is_pro (sebelum migrasi selesai)
+      const tLevel = user.tier_level !== undefined ? user.tier_level : (user.is_pro || 0);
+      
+      if (match) res.json({ success: true, userId: user.id, tierLevel: tLevel });
       else res.json({ success: false, message: "Password salah" });
     } catch (err) { res.json({ success: false, message: "Error validasi password" }); }
   });
@@ -160,12 +182,13 @@ app.post("/reset-password", async (req, res) => {
     } catch (error) { res.json({ success: false, message: "Server error reset" }); }
 });
 
+// ================= ENDPOINT CHAT & AI ROASTING PEDAS =================
 app.post("/chat", (req, res) => {
   const { message, wallet, userId } = req.body;
   if (!userId) return res.json({ message: "User belum login" });
 
   const parsed = parseMessage(message);
-  if (!parsed.amount) return res.json({ message: "Gue ga ngerti nominalnya bro 😅" });
+  if (!parsed.amount) return res.json({ message: "Sistem butuh angka/nominal bro, contoh: fomo memecoin 500k 😅" });
   if (parsed.category === "allowance") return res.json({ message: `🍜 Tunjangan/Uang makan masuk sebesar Rp${parsed.amount.toLocaleString("id-ID")}` });
   
   const dompetDipakai = wallet || 'utama';
@@ -183,20 +206,50 @@ app.post("/chat-ai", (req, res) => {
 
   pool.query("SELECT * FROM transactions WHERE user_id = ?", [userId], (err, rows) => {
     if(err) return res.json({ reply: "Error baca data." });
+    
     let income = 0; let expense = 0;
+    let tradingLossCount = 0; let totalTradingLoss = 0;
+
     rows.forEach(tx => { 
-        // Parsing ke Number karena tipe BIGINT MySQL kadang dibaca String di Node.js
         const nominal = Number(tx.amount);
         if (tx.type === "income") income += nominal; 
         if (tx.type === "expense") expense += nominal; 
+        if (tx.category === "investment" && tx.type === "expense") {
+            tradingLossCount++;
+            totalTradingLoss += nominal;
+        }
     });
+
+    const text = message.toLowerCase();
     const balance = income - expense;
-    if (message.toLowerCase().includes("roast")) return res.json({ reply: "💀 Dompet lu kerja rodi buat nongkrong." });
-    if (balance < 0) return res.json({ reply: `💀 Lu nombok hidup.\n\nEvaluasi kilat:\n• Pangkas lifestyle` });
-    res.json({ reply: '🔥 Cashflow aman terkendali. Lanjutkan bro!' });
+
+    // 1. ROASTING: FOMO / MEMECOIN
+    if (text.includes("fomo") || text.includes("meme") || text.includes("shitcoin") || text.includes("micin")) {
+        return res.json({ reply: `🔥 ROASTING: Beli memecoin karena FOMO masuk grup Telegram? Lu pikir lu siapa, bandar besar? Lu cuma jadi *exit liquidity* (tumbal) buat para Paus yang udah serok dari bawah! \n\n💡 SOLUSI: Hapus aplikasi exchange lu sekarang. Peluang lu menang main beginian lebih kecil dari kasino. Kalau lu emang mau investasi, mulai belajar fundamental, teknikal (Price Action), atau masukin duit lu ke ETF/Reksadana yang dikelola orang pinter!` });
+    }
+
+    // 2. ROASTING: FUTURES / MARGIN CALL / LIQUID / SAHAM GORENGAN
+    if (text.includes("liquid") || text.includes("mc") || text.includes("margin") || text.includes("futures") || text.includes("gorengan")) {
+        return res.json({ reply: `🔥 ROASTING: Kena likuidasi lagi? Pake leverage x100 ngerasa jadi pro trader padahal analisa lu cuma modal 'feeling' sama ludah influencer YouTube? \n\n💡 SOLUSI: Stop trading futures/margin! Mental dan *risk management* lu masih selevel anak TK. Main Spot aja dulu, cutloss dengan disiplin, dan pantau kalender ekonomi sebelum buka posisi.` });
+    }
+
+    // 3. ROASTING: REVENGE TRADING (HABITUAL LOSER) - Jika Loss >= 3 kali
+    if ((text.includes("rugi") || text.includes("loss") || text.includes("cutloss") || text.includes("boncos")) && tradingLossCount >= 3) {
+        return res.json({ reply: `🔥 ULTIMATE ROAST: Gue liat data lu, lu udah LOSS TRADING ${tradingLossCount} kali berturut-turut! Total duit lu yang dimakan market: Rp ${totalTradingLoss.toLocaleString("id-ID")}! \nLu bukan investasi bro, lu lagi donasi paksa ke market! Lu kena sindrom *Revenge Trading* (Balas dendam pengen balik modal instan). \n\n💡 SOLUSI DARURAT: STOP TRADING 1 MINGGU FULL. Market nggak akan ke mana-mana, tapi duit lu bisa habis ke 0. Puasa buka chart, evaluasi jurnal lu, dan sadar diri emosi lu lagi hancur lebur.` });
+    }
+
+    // 4. ROASTING: UMUM
+    if (text.includes("roast")) {
+        if (tradingLossCount > 0) return res.json({ reply: `🔥 ROASTING: Gaya lu elit, portofolio lu sulit! Dompet lu isinya cuma harapan kosong nungguin koin naik 1000% biar bisa pamer. \n\n💡 EVALUASI: Kurangi halu, bangun *cashflow* dari skill dunia nyata lu dulu.`});
+        if (balance < 0) return res.json({ reply: `💀 ROASTING: Lu nombok hidup bro. Pengeluaran lu lebih gede dari pemasukan. \n\n💡 SOLUSI: Pangkas lifestyle nongkrong lu, lu bukan sultan.` });
+        return res.json({ reply: "🔥 Cashflow lu aman bulan ini. Tumben lu bener ngatur duit." });
+    }
+
+    res.json({ reply: '💡 Sistem RantauFlow mendengarkan. Ketik "roast gue" atau curhatin rugi trading lu buat dievaluasi AI.' });
   });
 });
 
+// ================= ENDPOINT SUMMARY =================
 app.get('/summary', (req, res) => {
   const userId = req.query.userId;
   if (!userId) return res.json({ error: "Unauthorized" });
