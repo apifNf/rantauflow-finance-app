@@ -11,6 +11,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+// Pengecek Lalu Lintas: Log setiap request yang masuk ke server
+app.use((req, res, next) => {
+    console.log(`[TRAFFIC] ${req.method} ${req.url}`);
+    next();
+});
+
 // ================= SETUP EMAIL (OTP) =================
 const transporter = nodemailer.createTransport({
   service: 'gmail',
