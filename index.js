@@ -269,7 +269,7 @@ app.post("/chat", (req, res) => {
   // ================= LOGIKA MINI-ROAST AI =================
   if (parsed.category === "investment") {
       if (text.includes("loss") || text.includes("cutloss") || text.includes("liquid") || text.includes("mc") || text.includes("rugi") || text.includes("fomo") || text.includes("memecoin") || text.includes("sangkut")) {
-          miniRoast = "Jangan sering-sering kaya gini bro. Trading itu butuh analisa, boleh fomo jangan. Jaga psikologis dan manajemen risikomu!";
+          miniRoast = "Jangan sering-sering kaya gini bro. Trading itu butuh analisa, trade boleh fomo jangan. Jaga psikologis dan manajemen risikomu!";
       } else if (parsed.type === "income") {
           miniRoast = "Cakep! Profit is profit. Jangan lupa amankan cuan ke USDT atau tarik ke rekening dingin, jangan di-all in lagi.";
       } else {
