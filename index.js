@@ -51,6 +51,41 @@ pool.getConnection((err, connection) => {
     } else {
         console.log("[SUKSES] Database MySQL Enterprise Terhubung! Siap scale-up.");
         
+// ================= WEBHOOK PENERIMA WHATSAPP =================
+app.get("/webhook/whatsapp", (req, res) => {
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
+    // Ganti 'TOKEN_RAHASIA_MU' dengan string bebas buatanmu sendiri
+    if (mode === "subscribe" && token === "TOKEN_RAHASIA_MU") {
+        res.status(200).send(challenge);
+    } else {
+        res.sendStatus(403);
+    }
+});
+
+app.post("/webhook/whatsapp", (req, res) => {
+    const body = req.body;
+    if (body.object === "whatsapp_business_account") {
+        const entry = body.entry[0];
+        const changes = entry.changes[0];
+        const value = changes.value;
+
+        if (value.messages) {
+            const message = value.messages[0];
+            const senderPhone = message.from;
+            const messageText = message.text.body;
+
+            console.log(`Pesan masuk dari ${senderPhone}: ${messageText}`);
+            // Nanti di sini kita akan panggil fungsi parseMessage() 
+            // dan kirim balasan otomatis ke user
+        }
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(404);
+    }
+});
+
         // Pembuatan Tabel Dasar
         const createUsers = `CREATE TABLE IF NOT EXISTS users(
             id INT AUTO_INCREMENT PRIMARY KEY, 
