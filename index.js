@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 
 // ================= SETUP MIDTRANS =================
 const snap = new midtransClient.Snap({
-  isProduction: false,
+  isProduction: true,
   serverKey: process.env.MIDTRANS_SERVER_KEY || 'RAHASIA_DI_HOSTINGER',
   clientKey: process.env.MIDTRANS_CLIENT_KEY || 'RAHASIA_DI_HOSTINGER'
 });
@@ -263,11 +263,34 @@ app.post("/chat", (req, res) => {
   if (parsed.category === "allowance") return res.json({ message: `🍜 Tunjangan/Uang makan masuk sebesar Rp${parsed.amount.toLocaleString("id-ID")}` });
   
   const dompetDipakai = wallet || 'utama';
+  const text = message.toLowerCase();
+  let miniRoast = "";
+
+  // ================= LOGIKA MINI-ROAST AI =================
+  if (parsed.category === "investment") {
+      if (text.includes("loss") || text.includes("cutloss") || text.includes("liquid") || text.includes("mc") || text.includes("rugi") || text.includes("fomo") || text.includes("memecoin") || text.includes("sangkut")) {
+          miniRoast = "Jangan sering-sering kaya gini bro. Trading itu butuh analisa, boleh fomo jangan. Jaga psikologis dan manajemen risikomu!";
+      } else if (parsed.type === "income") {
+          miniRoast = "Cakep! Profit is profit. Jangan lupa amankan cuan ke USDT atau tarik ke rekening dingin, jangan di-all in lagi.";
+      } else {
+          miniRoast = "Nah, kelakuan beli aset gini yang bisa ngubah hidup lu di masa depan. Kunci rapat-rapat, diamond hands!";
+      }
+  } else if (parsed.category === "lifestyle") {
+      miniRoast = "Nongkrong dan hedon terooos. Inget umur bro, dompet juga butuh istirahat.";
+  } else if (parsed.category === "saving") {
+      miniRoast = "Mantap! Nabung adalah jalan ninja menuju kebebasan finansial. Lanjutkan habit ini.";
+  }
+
+  // Gabungkan pesan pencatatan dengan AI Mini-Roast (jika ada)
+  const finalMessage = miniRoast 
+      ? `Tercatat pos *${parsed.category}* sebesar Rp${parsed.amount.toLocaleString("id-ID")} memakai Dompet [${dompetDipakai}].\n\n🤖 AI: ${miniRoast}`
+      : `Tercatat pos *${parsed.category}* sebesar Rp${parsed.amount.toLocaleString("id-ID")} memakai Dompet [${dompetDipakai}].`;
+
   pool.query("INSERT INTO transactions(user_id, amount, type, category, wallet) VALUES(?, ?, ?, ?, ?)", 
     [userId, parsed.amount, parsed.type, parsed.category, dompetDipakai], 
     (err) => {
       if (err) return res.json({ message: "Error simpan data MySQL" });
-      res.json({ message: `Tercatat pos *${parsed.category}* sebesar Rp${parsed.amount.toLocaleString("id-ID")} memakai Dompet [${dompetDipakai}].` });
+      res.json({ message: finalMessage });
   });
 });
 
