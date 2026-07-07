@@ -182,6 +182,53 @@ app.post("/reset-password", async (req, res) => {
     } catch (error) { res.json({ success: false, message: "Server error reset" }); }
 });
 
+// ================= ENDPOINT PEMBAYARAN MIDTRANS =================
+app.post('/create-transaction', async (req, res) => {
+    const { userId, tierLevel, price } = req.body;
+    if (!userId) return res.json({ error: "User belum login" });
+
+    // Membuat nomor antrean unik
+    let orderId = `RF-${tierLevel}-${userId}-${Date.now()}`;
+    
+    let parameter = {
+        transaction_details: {
+            order_id: orderId,
+            gross_amount: price
+        },
+        customer_details: {
+            first_name: "Member",
+            email: `user${userId}@rantauflow.com`
+        }
+    };
+    
+    try {
+        const transaction = await snap.createTransaction(parameter);
+        res.json({ token: transaction.token });
+    } catch (e) {
+        res.json({ error: e.message });
+    }
+});
+
+// Webhook untuk mendengarkan jika user sudah transfer
+app.post('/midtrans-notification', async (req, res) => {
+    try {
+        const statusResponse = await snap.transaction.notification(req.body);
+        let orderId = statusResponse.order_id;
+        let transactionStatus = statusResponse.transaction_status;
+
+        // Jika pembayaran sukses, upgrade otomatis Tier User di MySQL
+        if (transactionStatus === 'capture' || transactionStatus === 'settlement'){
+            const parts = orderId.split('-');
+            if(parts.length >= 3) {
+                const tier = parseInt(parts[1]);
+                const uId = parseInt(parts[2]);
+                pool.query("UPDATE users SET tier_level = ? WHERE id = ?", [tier, uId]);
+            }
+        }
+        res.status(200).send("OK");
+    } catch (e) { res.status(500).send("Error"); }
+});
+
 // ================= ENDPOINT CHAT & AI ROASTING PEDAS =================
 app.post("/chat", (req, res) => {
   const { message, wallet, userId } = req.body;

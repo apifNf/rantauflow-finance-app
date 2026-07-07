@@ -14,7 +14,7 @@
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-BcDKOmKoKSaneY1-"></script>
   <style>
     :root {
       --bg-dark: #070B14;
@@ -246,7 +246,8 @@
           <li><strong>Proactive Smart Nudges (Roasting)</strong></li>
           <li>Prioritas Support Customer Service</li>
         </ul>
-        <button class="btn btn-primary" style="width: 100%; background: var(--accent-green); color: var(--bg-dark);" onclick="alert('Gateway Pembayaran PRO BIZ (Rp39.000) akan segera hadir!')">Pilih BIZ</button>
+        <button class="btn btn-outline" style="width: 100%; border-color: var(--glass-border);" onclick="bayarMidtrans(1, 9900)">Pilih PRO</button>
+        <button class="btn btn-primary" style="width: 100%; background: var(--accent-green); color: var(--bg-dark);" onclick="bayarMidtrans(2, 39000)">Pilih BIZ</button>
       </div>
 
     </div>
@@ -260,7 +261,9 @@
     const userId = localStorage.getItem('rf_user_id');
 
     if (!userId) {
-        console.error("Peringatan: Sistem kehilangan userId! Tapi saya tahan agar tidak pindah halaman.");
+        if (!userId) {
+        window.location.href = 'login.html'; 
+    }
     }
 
     window.rawTransactions = [];
@@ -617,6 +620,43 @@
 
     function quickAdd(text) { document.getElementById("textInput").value = text; sendData(); }
     function quickAsk(text) { document.getElementById("textInput").value = text; askAI(); }
+
+async function bayarMidtrans(tier, price) {
+    const bayarBtn = event.target;
+    const originalText = bayarBtn.innerText;
+    bayarBtn.innerText = "Memuat Sistem...";
+    bayarBtn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_URL}/create-transaction`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId, tierLevel: tier, price: price })
+        });
+        const data = await res.json();
+
+        bayarBtn.innerText = originalText;
+        bayarBtn.disabled = false;
+
+        if (data.token) {
+            window.snap.pay(data.token, {
+                onSuccess: function(result){
+                    alert("Pembayaran sukses! Silakan login ulang untuk menikmati fitur.");
+                    localStorage.removeItem("rf_user_id");
+                    window.location.href = "login.html";
+                },
+                onPending: function(result){ alert("Menunggu konfirmasi pembayaran..."); },
+                onError: function(result){ alert("Pembayaran gagal atau dibatalkan!"); }
+            });
+        } else {
+            alert("Gagal membuat transaksi: " + data.error);
+        }
+    } catch(e) { 
+        alert("Jaringan error saat menghubungi sistem pembayaran."); 
+        bayarBtn.innerText = originalText;
+        bayarBtn.disabled = false;
+    }
+}
 
     window.onload = loadData;
 </script>
