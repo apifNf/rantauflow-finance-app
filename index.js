@@ -95,9 +95,15 @@ function parseMessage(text) {
   text = (text || "").toLowerCase();
   let amount = 0; let category = "other"; let type = "expense";
   
-  const match = text.match(/(\$)?(\d+)\s?(k|jt)?\b/i);
+  // REGEX BARU: Sekarang AI bisa membaca titik (.) maupun koma (,)
+  const match = text.match(/(\$)?(\d+(?:[.,]\d+)?)\s?(k|jt)?\b/i);
   if (match) {
-    const isDollar = match[1] === "$"; amount = parseInt(match[2]);
+    const isDollar = match[1] === "$"; 
+    
+    // JS butuh titik untuk desimal, jadi kita ubah koma menjadi titik secara otomatis
+    let parsedNumber = parseFloat(match[2].replace(',', '.'));
+    
+    amount = parsedNumber;
     if (match[3] === "k") amount *= 1000;
     if (match[3] === "jt") amount *= 1000000;
     if (isDollar) amount *= 16300; 
@@ -105,7 +111,7 @@ function parseMessage(text) {
   
   // Deteksi Jargon Trading & Investasi
   if (text.includes("fomo") || text.includes("memecoin") || text.includes("shitcoin") || text.includes("koin micin") || text.includes("sangkut")) { type = "expense"; category = "investment"; }
-  else if (text.includes("liquid") || text.includes("mc") || text.includes("margin call") || text.includes("futures") || text.includes("loss") || text.includes("sl") || text.includes("cutloss") || text.includes("rugi") || text.includes("boncos")) { type = "expense"; category = "investment"; }
+  else if (text.includes("liquid") || text.includes("mc") || text.includes("margin call") || text.includes("futures") || text.includes("loss") || text.includes("cutloss") || text.includes("rugi") || text.includes("boncos")) { type = "expense"; category = "investment"; }
   else if (text.includes("profit") || text.includes("cuan") || text.includes("tp") || text.includes("take profit") || text.includes("wd") || text.includes("withdraw")) { type = "income"; category = "investment"; } 
   else if (text.includes("crypto") || text.includes("forex") || text.includes("saham") || text.includes("invest") || text.includes("beli koin")) { type = "expense"; category = "investment"; } 
   else if (text.includes("tabung") || text.includes("nabung") || text.includes("save")) { type = "saving"; category = "saving"; } 
