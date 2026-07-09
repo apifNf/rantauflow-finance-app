@@ -57,38 +57,43 @@ pool.getConnection((err, connection) => {
     } else {
         console.log("[SUKSES] Database MySQL Enterprise Terhubung! Siap scale-up.");
         
-// ================= WEBHOOK PENERIMA WHATSAPP =================
+// ==========================================
+// 1. WEBHOOK VERIFICATION (GET)
+// ==========================================
 app.get("/webhook/whatsapp", (req, res) => {
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
-    // Ganti 'TOKEN_RAHASIA_MU' dengan string bebas buatanmu sendiri
+
     if (mode === "subscribe" && token === "TOKEN_RAHASIA_MU") {
+        console.log("[WEBHOOK] Verifikasi Berhasil!");
         res.status(200).send(challenge);
     } else {
+        console.log("[WEBHOOK] Verifikasi Gagal! Token tidak cocok.");
         res.sendStatus(403);
     }
 });
 
+// ==========================================
+// 2. RECEIVE INCOMING MESSAGES (POST)
+// ==========================================
 app.post("/webhook/whatsapp", (req, res) => {
-    const body = req.body;
-    if (body.object === "whatsapp_business_account") {
-        const entry = body.entry[0];
-        const changes = entry.changes[0];
-        const value = changes.value;
+    // 1. Langsung balas 200 OK ke Meta agar mereka tidak memutus koneksi
+    res.sendStatus(200);
 
-        if (value.messages) {
-            const message = value.messages[0];
-            const senderPhone = message.from;
-            const messageText = message.text.body;
-
-            console.log(`Pesan masuk dari ${senderPhone}: ${messageText}`);
-            // Nanti di sini kita akan panggil fungsi parseMessage() 
-            // dan kirim balasan otomatis ke user
+    // 2. Log data yang masuk untuk memastikan formatnya
+    console.log("[INCOMING WEBHOOK] Terdeteksi request POST dari Meta!");
+    
+    try {
+        const body = req.body;
+        // Cek apakah ini benar-benar pesan WhatsApp
+        if (body.object === "whatsapp_business_account") {
+            console.log("[PAYLOAD] Data pesan:", JSON.stringify(body, null, 2));
+        } else {
+            console.log("[PAYLOAD] Bukan dari WhatsApp Business Account");
         }
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(404);
+    } catch (error) {
+        console.error("[ERROR] Gagal memproses data masuk:", error);
     }
 });
 
