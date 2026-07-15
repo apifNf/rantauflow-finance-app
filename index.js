@@ -7,6 +7,7 @@ const multer = require("multer");
 const midtransClient = require("midtrans-client");
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
+const cron = require("node-cron"); // MODUL FASE 3 DITAMBAHKAN
 
 const app = express();
 app.use(cors());
@@ -41,7 +42,7 @@ const snap = new midtransClient.Snap({
 // ================= SETUP MULTER (UPLOAD FOTO PROFIL) =================
 const uploadDir = path.join(__dirname, 'public', 'uploads', 'avatars');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true }); // Buat folder otomatis jika belum ada
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 const storage = multer.diskStorage({
@@ -50,20 +51,18 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        // Format penamaan file: avatar-IDUSER-TIMESTAMP.jpg
         cb(null, 'avatar-' + req.body.userId + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 2 * 1024 * 1024 }, // Batas ukuran maksimal 2MB
+    limits: { fileSize: 2 * 1024 * 1024 }, 
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/')) cb(null, true);
         else cb(new Error('Format ditolak! Hanya gambar yang diizinkan.'));
     }
 });
-
 
 // ================= FASE 2: DATABASE CONNECTION POOLING (MYSQL) =================
 const pool = mysql.createPool({
@@ -76,14 +75,12 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// Tes Koneksi & Auto-Migrasi Tabel Otomatis
 pool.getConnection((err, connection) => {
     if (err) {
         console.error("[CRITICAL ERROR] Gagal nyambung ke MySQL:", err.message);
     } else {
         console.log("[SUKSES] Database MySQL Enterprise Terhubung! Siap scale-up.");
         
-        // Pembuatan Tabel Dasar dengan Tambahan Kolom Name & Avatar
         const createUsers = `CREATE TABLE IF NOT EXISTS users(
             id INT AUTO_INCREMENT PRIMARY KEY, 
             email VARCHAR(255) UNIQUE, 
@@ -109,10 +106,9 @@ pool.getConnection((err, connection) => {
         connection.query(createUsers);
         connection.query(createTransactions);
 
-        // AUTO-MIGRASI: Cek apakah masih pakai format lama (is_pro) atau butuh kolom name/avatar
         connection.query("SHOW COLUMNS FROM users LIKE 'is_pro'", (err, results) => {
             if (results && results.length > 0) {
-                console.log("[MIGRASI] Mengupgrade tabel users ke versi Enterprise (Tier & Affiliate)...");
+                console.log("[MIGRASI] Mengupgrade tabel users ke versi Enterprise...");
                 connection.query("ALTER TABLE users CHANGE is_pro tier_level TINYINT DEFAULT 0");
                 connection.query("ALTER TABLE users ADD COLUMN wa_number VARCHAR(20) UNIQUE DEFAULT NULL");
                 connection.query("ALTER TABLE users ADD COLUMN affiliate_code VARCHAR(50) UNIQUE DEFAULT NULL");
@@ -132,8 +128,70 @@ pool.getConnection((err, connection) => {
     }
 });
 
+// ================= FASE 3 (INTI): MESIN PENGIRIM WA & CRON JOB =================
 
-// ================= FASE 3: WEBHOOK WHATSAPP (RUTE UTAMA META) =================
+// 1. Fungsi Pendorong Notifikasi ke WhatsApp Meta API
+async function sendWhatsAppMessage(phoneNumber, textMessage) {
+    try {
+        const token = process.env.META_WA_TOKEN || 'TOKEN_SISTEM_META_KAMU';
+        const phoneId = process.env.META_PHONE_ID || 'PHONE_ID_META_KAMU';
+        const url = `https://graph.facebook.com/v17.0/${phoneId}/messages`;
+
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                messaging_product: "whatsapp",
+                to: phoneNumber,
+                type: "text",
+                text: { body: textMessage }
+            })
+        });
+        console.log(`[SMART NUDGE] Pesan otomatis terkirim ke: ${phoneNumber}`);
+    } catch (err) {
+        console.error("[SMART NUDGE ERROR] Gagal mengirim WA:", err.message);
+    }
+}
+
+// 2. Automated Cron Routines (Patroli Keamanan Jam 20:00 Tiap Malam)
+cron.schedule('0 20 * * *', () => {
+    console.log("[CRON] Menjalankan Patroli Keamanan Finansial (Smart Nudges)...");
+    
+    // Hanya patroli data user PRO/PRO BIZ yang sudah mendaftarkan nomor WA
+    pool.query("SELECT id, name, wa_number FROM users WHERE tier_level = 2 AND wa_number IS NOT NULL", (err, users) => {
+        if (err || users.length === 0) return;
+        
+        users.forEach(user => {
+            // Ambil semua transaksi hari ini milik user tersebut
+            pool.query("SELECT * FROM transactions WHERE user_id = ? AND DATE(created_at) = CURDATE()", [user.id], (err, txs) => {
+                if (err || txs.length === 0) return;
+                
+                let dailyExpense = 0; 
+                let dailyInvestmentLoss = 0;
+
+                txs.forEach(tx => {
+                    if (tx.type === 'expense') dailyExpense += Number(tx.amount);
+                    if (tx.type === 'expense' && tx.category === 'investment') dailyInvestmentLoss += Number(tx.amount);
+                });
+
+                // Algorithmic Triggers
+                if (dailyInvestmentLoss > 500000) {
+                    const msg = `⚠️ *RantauFlow Smart Nudge*\n\nHalo ${user.name || 'Bro'}, sistem mendeteksi hari ini lu cutloss/depo kripto sampai *Rp${dailyInvestmentLoss.toLocaleString('id-ID')}* ya? \n\nIstirahat dulu bro, jangan sampai kena sindrom Revenge Trading. Jaga psikologis lu!`;
+                    sendWhatsAppMessage(user.wa_number, msg);
+                } 
+                else if (dailyExpense > 1000000) {
+                    const msg = `🔥 *RantauFlow Roasting*\n\nHalo ${user.name || 'Bro'}, pengeluaran lu hari ini tembus *Rp${dailyExpense.toLocaleString('id-ID')}*! \n\nLu ngepet di mana bos hambur-hamburin duit segitu sehari? Awas boros, ingat target kebebasan finansial lu!`;
+                    sendWhatsAppMessage(user.wa_number, msg);
+                }
+            });
+        });
+    });
+});
+
+// ================= FASE 2: WEBHOOK WHATSAPP (RUTE UTAMA META) =================
 app.get("/webhook/whatsapp", (req, res) => {
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
@@ -149,16 +207,15 @@ app.get("/webhook/whatsapp", (req, res) => {
 });
 
 app.post("/webhook/whatsapp", (req, res) => {
-    res.sendStatus(200); // Wajib balas 200 OK ke Meta secepatnya
+    res.sendStatus(200); 
     console.log("[INCOMING WEBHOOK] Terdeteksi request POST dari Meta!");
     
     try {
         const body = req.body;
         if (body.object === "whatsapp_business_account") {
-            console.log("[PAYLOAD] Data pesan:", JSON.stringify(body, null, 2));
-        } else {
-            console.log("[PAYLOAD] Bukan dari WhatsApp Business Account");
-        }
+            // Jika diperlukan, letakkan logika NLP Parsing WA disini nanti
+            console.log("[PAYLOAD] Pesan Masuk WA.");
+        } 
     } catch (error) {
         console.error("[ERROR] Gagal memproses data masuk:", error);
     }
@@ -271,22 +328,19 @@ app.post("/reset-password", async (req, res) => {
     } catch (error) { res.json({ success: false, message: "Server error reset" }); }
 });
 
-// ================= ENDPOINT MANAJEMEN PROFIL (BARU) =================
-
-// Endpoint untuk mengambil data nama & avatar saat dashboard diload
+// ================= ENDPOINT MANAJEMEN PROFIL =================
 app.get("/profile", (req, res) => {
     const { userId } = req.query;
     if (!userId) return res.json({ success: false, message: "Unauthorized" });
 
-    pool.query("SELECT id, email, name, avatar, tier_level FROM users WHERE id = ?", [userId], (err, results) => {
+    pool.query("SELECT id, email, name, avatar, tier_level, wa_number FROM users WHERE id = ?", [userId], (err, results) => {
         if (err || results.length === 0) return res.json({ success: false, message: "User tidak ditemukan" });
         res.json({ success: true, user: results[0] });
     });
 });
 
-// Endpoint untuk update Profil (Nama, Sandi, & Foto Avatar)
 app.post("/api/user/update-profile", upload.single('avatar'), (req, res) => {
-    const { userId, name, oldPassword, newPassword } = req.body;
+    const { userId, name, waNumber, oldPassword, newPassword } = req.body;
     if (!userId) return res.json({ success: false, message: "Unauthorized" });
 
     pool.query("SELECT * FROM users WHERE id = ?", [userId], async (err, results) => {
@@ -296,20 +350,27 @@ app.post("/api/user/update-profile", upload.single('avatar'), (req, res) => {
         let queryUpdates = [];
         let queryParams = [];
 
-        // 1. Update Nama
         if (name && name !== user.name) {
             queryUpdates.push("name = ?");
             queryParams.push(name);
         }
 
-        // 2. Update File Foto Avatar
+        // Simpan nomor WA baru agar fitur Smart Nudges dari Cron bisa bekerja
+        if (waNumber && waNumber !== user.wa_number) {
+            // Bersihkan format nomor WA (harus awalan 62 atau kode negara, hapus + atau 0 di depan)
+            let cleanNumber = waNumber.replace(/\D/g,'');
+            if (cleanNumber.startsWith('0')) cleanNumber = '62' + cleanNumber.substring(1);
+            
+            queryUpdates.push("wa_number = ?");
+            queryParams.push(cleanNumber);
+        }
+
         if (req.file) {
             const avatarPath = '/public/uploads/avatars/' + req.file.filename;
             queryUpdates.push("avatar = ?");
             queryParams.push(avatarPath);
         }
 
-        // 3. Update Password
         if (oldPassword && newPassword) {
             const match = await bcrypt.compare(oldPassword, user.password);
             if (!match) return res.json({ success: false, message: "Password lama salah!" });
@@ -318,26 +379,22 @@ app.post("/api/user/update-profile", upload.single('avatar'), (req, res) => {
             queryParams.push(hashedNew);
         }
 
-        // Jika tidak ada data yang dilempar untuk diubah
         if (queryUpdates.length === 0) {
             return res.json({ success: true, message: "Tidak ada perubahan", user: { name: user.name, avatar: user.avatar } });
         }
 
-        // Jalankan Query Update secara Dinamis
         const sql = `UPDATE users SET ${queryUpdates.join(', ')} WHERE id = ?`;
         queryParams.push(userId);
 
         pool.query(sql, queryParams, (updateErr) => {
-            if (updateErr) return res.json({ success: false, message: "Gagal update database" });
+            if (updateErr) return res.json({ success: false, message: "Gagal update database (Kemungkinan nomor WA sudah terpakai)" });
             
-            // Kembalikan data terbaru ke frontend agar langsung berubah di dashboard
-            pool.query("SELECT id, email, name, avatar, tier_level FROM users WHERE id = ?", [userId], (err2, res2) => {
+            pool.query("SELECT id, email, name, avatar, tier_level, wa_number FROM users WHERE id = ?", [userId], (err2, res2) => {
                 res.json({ success: true, message: "Profil berhasil diperbarui!", user: res2[0] });
             });
         });
     });
 });
-
 
 // ================= ENDPOINT PEMBAYARAN MIDTRANS =================
 app.post('/create-transaction', async (req, res) => {
