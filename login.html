@@ -46,8 +46,11 @@
         </span>
     </div>
     
-    <button onclick="login()">Access Account</button>
-    <button onclick="register()" class="btn-outline">Buat Akun Baru</button>
+    <button onclick="login()" class="btn btn-primary" style="width: 100%;">Access Account</button>
+<button onclick="register()" class="btn btn-outline" style="width: 100%;">Buat Akun Baru</button>
+
+<!-- TAMBAHKAN TOMBOL INI DI SINI -->
+<button id="installAppBtn" class="btn btn-accent" style="width: 100%; display: none; background: #34D399; color: #070B14; font-weight: bold; box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);">📲 Install Aplikasi PWA</button>
     
     <span class="link"><a onclick="showModal()">Lupa Password?</a></span>
     
@@ -171,14 +174,44 @@
         }
     </script>
 
-    <!-- SCRIPT PWA / SERVICE WORKER -->
+    <!-- SCRIPT PWA & TOMBOL INSTALL -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('Service Worker terdaftar!', reg.scope))
+            .then(reg => console.log('Service Worker terdaftar!'))
             .catch(err => console.log('Service Worker gagal terdaftar:', err));
         });
+      }
+
+      // Logika Penangkapan Pop-up Install
+      let deferredPrompt;
+      const installAppBtn = document.getElementById('installAppBtn');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Mencegah pop-up default bawaan Chrome muncul
+        e.preventDefault();
+        // Simpan event-nya agar bisa dipicu nanti
+        deferredPrompt = e;
+        // Munculkan tombol Install buatan kita
+        if (installAppBtn) {
+            installAppBtn.style.display = 'block';
+        }
+      });
+
+      if (installAppBtn) {
+          installAppBtn.addEventListener('click', async () => {
+            if (deferredPrompt !== null) {
+                // Picu pop-up instalasi bawaan sistem
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User sukses menginstal RantauFlow');
+                    installAppBtn.style.display = 'none'; // Sembunyikan tombol setelah diinstal
+                }
+                deferredPrompt = null;
+            }
+          });
       }
     </script>
 </body>
