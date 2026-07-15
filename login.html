@@ -107,22 +107,35 @@
             window.location.href = 'index.html';
         } else { document.getElementById('msg').innerText = data.message; }
     }
-
+    
     async function register() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const msgBox = document.getElementById('msg');
         msgBox.innerText = "Memproses...";
-        
-        const res = await fetch(`${API_URL}/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
-        const data = await res.json();
-        
-        if (data.success) {
-            msgBox.style.color = "#10b981";
-            msgBox.innerText = "Akun berhasil dibuat! Silakan klik Access Account.";
-        } else { 
-            msgBox.style.color = "#ef4444";
-            msgBox.innerText = "Gagal: " + data.message; 
+
+        // 1. Tangkap kode ref dari URL saat tombol ditekan
+        const urlParams = new URLSearchParams(window.location.search);
+        const referredBy = urlParams.get('ref');
+
+        try {
+            // 2. Kirim data email, password, DAN referredBy ke server
+            const res = await fetch(`${API_URL}/register`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, referredBy }) 
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                localStorage.setItem('rf_user_id', data.userId);
+                localStorage.setItem('rf_tier_level', data.tierLevel);
+                window.location.href = 'index.html';
+            } else {
+                msgBox.innerText = data.message;
+            }
+        } catch (err) {
+            msgBox.innerText = "Error jaringan, coba lagi.";
         }
     }
 

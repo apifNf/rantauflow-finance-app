@@ -27,15 +27,7 @@
       --accent-blue: #38BDF8;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
 
     /* CSS KHUSUS PRINT */
     body.is-printing { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; min-height: auto !important; display: block !important; }
@@ -71,170 +63,33 @@
     .modal-content { max-width: 600px; width: 90%; text-align: center; transform: translateY(20px); transition: transform 0.3s ease; }
     .modal-overlay.active .modal-content { transform: translateY(0); }
 
-    /* Custom List styling for Paywall */
     .paywall-list { font-size: 13px; color: var(--text-main); padding-left: 0; list-style: none; margin-bottom: 20px; line-height: 1.8; text-align: left; }
     .paywall-list li::before { content: "✓"; color: var(--accent-green); font-weight: bold; margin-right: 8px; }
 
-    /* Profile Dropdown & Layout Styles */
-    .profile-container {
-      position: relative;
-      cursor: pointer;
-    }
-    .profile-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid var(--glass-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
-      overflow: hidden;
-    }
-    .profile-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .profile-dropdown {
-      position: absolute;
-      top: 45px;
-      right: 0;
-      width: 280px;
-      background: #0b0f19;
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
-      z-index: 1100;
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-    .profile-dropdown.active {
-      display: flex;
-    }
-    .dropdown-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--glass-border);
-      padding-bottom: 12px;
-    }
-    .dropdown-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid var(--glass-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
-      overflow: hidden;
-    }
-    .dropdown-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .dropdown-user-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      overflow: hidden;
-    }
-    .dropdown-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .dropdown-email {
-      font-size: 11px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .dropdown-badge {
-      display: inline-block;
-      align-self: flex-start;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    .badge-free {
-      background: rgba(148, 163, 184, 0.15);
-      color: var(--text-muted);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-    }
-    .badge-pro {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent-blue);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-    .badge-probiz {
-      background: rgba(52, 211, 153, 0.15);
-      color: var(--accent-green);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      color: var(--text-main);
-      font-size: 14px;
-      transition: background 0.2s ease;
-      text-decoration: none;
-    }
-    .dropdown-item:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .dropdown-item-danger {
-      color: var(--accent-red);
-    }
-    .dropdown-item-danger:hover {
-      background: rgba(248, 113, 113, 0.1);
-    }
-    .lang-selector {
-      display: flex;
-      gap: 4px;
-      background: rgba(0,0,0,0.25);
-      border: 1px solid var(--glass-border);
-      padding: 2px;
-      border-radius: 8px;
-    }
-    .lang-btn {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 6px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .lang-btn.active {
-      background: var(--text-main);
-      color: var(--bg-dark);
-    }
+    .profile-container { position: relative; cursor: pointer; }
+    .profile-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-main); overflow: hidden; }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-dropdown { position: absolute; top: 45px; right: 0; width: 280px; background: #0b0f19; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6); z-index: 1100; display: none; flex-direction: column; gap: 12px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .profile-dropdown.active { display: flex; }
+    .dropdown-header { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
+    .dropdown-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--text-main); overflow: hidden; }
+    .dropdown-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .dropdown-user-info { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+    .dropdown-name { font-size: 14px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dropdown-email { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dropdown-badge { display: inline-block; align-self: flex-start; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; margin-top: 4px; }
+    
+    .badge-free { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.2); }
+    .badge-pro { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-probiz { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); border: 1px solid rgba(52, 211, 153, 0.3); }
+    
+    .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; color: var(--text-main); font-size: 14px; transition: background 0.2s ease; text-decoration: none; }
+    .dropdown-item:hover { background: rgba(255,255,255,0.05); }
+    .dropdown-item-danger { color: var(--accent-red); }
+    .dropdown-item-danger:hover { background: rgba(248, 113, 113, 0.1); }
+    .lang-selector { display: flex; gap: 4px; background: rgba(0,0,0,0.25); border: 1px solid var(--glass-border); padding: 2px; border-radius: 8px; }
+    .lang-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 6px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+    .lang-btn.active { background: var(--text-main); color: var(--bg-dark); }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -464,7 +319,19 @@
         <input id="profileNameInput" class="premium-input" placeholder="Masukkan nama lengkap Anda" autocomplete="off">
       </div>
 
-      <!-- FASE 3: KOLOM INPUT WHATSAPP -->
+      <!-- FASE 4: UI AFILIASI 30% -->
+      <div style="background: rgba(52, 211, 153, 0.05); border: 1px solid rgba(52, 211, 153, 0.2); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; font-size: 14px; color: var(--accent-green);">💸 Program Afiliasi (Komisi 30%)</h4>
+            <div style="font-size: 16px; font-weight: 700; color: var(--text-main);" id="affBalance">Rp 0</div>
+        </div>
+        <p style="margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;">Bagikan *link* ini. Dapatkan pasif *income* 30% dari setiap teman yang *upgrade* paket bulanan.</p>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="refLinkInput" class="premium-input" readonly style="flex: 1; padding: 10px 14px; font-size: 12px; background: rgba(0,0,0,0.4);" value="Memuat...">
+            <button onclick="copyRefLink()" class="btn btn-outline" style="padding: 0 16px; font-size: 13px;">Salin</button>
+        </div>
+      </div>
+
       <div style="display: flex; flex-direction: column; gap: 8px;">
         <label style="font-size: 13px; color: var(--text-muted); font-weight: 500;" data-i18n="profile_wa">Nomor WhatsApp (PRO BIZ)</label>
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -494,205 +361,38 @@
     const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
     const userId = localStorage.getItem('rf_user_id');
 
-    if (!userId) {
-        window.location.href = 'login.html'; 
-    }
+    if (!userId) window.location.href = 'login.html'; 
 
-    // ==================== SYSTEM MANAGEMENT ====================
     let inactivityTimer;
-
-    function resetInactivityTimer() {
-        clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(triggerLogout, 300000); // 5 menit
-    }
-
+    function resetInactivityTimer() { clearTimeout(inactivityTimer); inactivityTimer = setTimeout(triggerLogout, 300000); }
     function triggerLogout() {
-        localStorage.removeItem('rf_user_id');
-        localStorage.removeItem('rf_is_pro');
-        localStorage.removeItem('rf_tier_level');
-        localStorage.removeItem('rf_user_name');
-        localStorage.removeItem('rf_user_email');
-        localStorage.removeItem('rf_user_avatar');
-        localStorage.removeItem('rf_wa_number');
-        
-        const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
-        alert(langDictionary[currentLang].notif_logout);
+        localStorage.clear();
+        alert(langDictionary[localStorage.getItem('rantauflow_lang') || 'id'].notif_logout);
         window.location.href = 'login.html';
     }
 
-    window.onmousemove = resetInactivityTimer;
-    window.onmousedown = resetInactivityTimer;
-    window.onkeypress = resetInactivityTimer;
-    window.onclick = resetInactivityTimer;
-    window.ontouchstart = resetInactivityTimer;
+    window.onmousemove = window.onmousedown = window.onkeypress = window.onclick = window.ontouchstart = resetInactivityTimer;
 
-    // ==================== LOCALIZATION DICTIONARY ====================
     const langDictionary = {
-        id: {
-            total_balance: "Total Saldo (Semua Dompet)",
-            income: "Pemasukan",
-            expense: "Pengeluaran",
-            spending_coach: "✨ Asisten Keuangan AI",
-            health_score: "Skor Kesehatan",
-            add_tx_ask_ai: "Tambah Transaksi / Tanya AI",
-            wallet_utama: "👛 Dompet Utama (Tunai)",
-            add_wallet_pro: "🔒 + Tambah Dompet/Rekening (PRO)",
-            send_btn: "Kirim",
-            ask_ai_btn: "Tanya AI",
-            input_placeholder: "contoh: fomo memecoin 500k atau roast gue",
-            quick_eat: "+ Makan 20k",
-            quick_grab: "+ Grab 30k",
-            quick_check: "Cek Duit Gue",
-            quick_roast: "🔥 Roast Cashflow",
-            top_category: "Kategori Teratas",
-            new_category_pro: "🔒 Kategori Baru",
-            recent_activity: "Aktivitas Terakhir",
-            financial_report: "Laporan Finansial",
-            export_csv: "📊 Ekspor CSV",
-            download_pdf: "📄 Unduh e-Statement",
-            expense_distribution: "Distribusi Pengeluaran",
-            edit_profile_title: "Pengaturan Profil",
-            change_photo: "Pilih Foto",
-            photo_hint: "Format JPG/PNG maks. 2MB",
-            profile_name: "Nama Lengkap",
-            profile_wa: "Nomor WhatsApp (PRO BIZ)",
-            wa_hint: "✅ AI Smart Nudges Aktif",
-            security_settings: "Keamanan & Password",
-            old_password_placeholder: "Password Lama",
-            new_password_placeholder: "Password Baru",
-            cancel: "Batal",
-            save_changes: "Simpan Perubahan",
-            profile_menu: "⚙️ Pengaturan Profil",
-            logout_menu: "🚪 Keluar Akun",
-            free_badge: "GRATIS",
-            pro_badge: "PRO",
-            probiz_badge: "PRO BIZ",
-            sisa_kuota: "⚠️ Sisa kuota catatan gratis bulan ini: ",
-            transaksi: " transaksi.",
-            upgrade_pro: "Upgrade Pro (Mulai Rp 9.900)",
-            notif_logout: "Sesi Anda telah berakhir demi keamanan karena tidak ada aktivitas selama 5 menit.",
-            no_tx: "Belum ada transaksi 💸",
-            saving_rate_prefix: "Rasio Tabungan ",
-            new_account: "Akun Baru",
-            growing: "Bertumbuh",
-            stable: "Stabil",
-            burn_mode: "Boros",
-            health_sehat: "Sehat. Dompet aman.",
-            health_stabil: "Lumayan stabil.",
-            health_warning: "Peringatan. Cek pengeluaran.",
-            health_kritis: "Kritis. Kurangi nongkrong."
-        },
-        en: {
-            total_balance: "Total Balance (All Wallets)",
-            income: "Income",
-            expense: "Expense",
-            spending_coach: "✨ AI Spending Coach",
-            health_score: "Health Score",
-            add_tx_ask_ai: "Add Transaction / Ask AI",
-            wallet_utama: "👛 Main Wallet (Cash)",
-            add_wallet_pro: "🔒 + Add Wallet/Account (PRO)",
-            send_btn: "Send",
-            ask_ai_btn: "Ask AI",
-            input_placeholder: "e.g., fomo memecoin 500k or roast me",
-            quick_eat: "+ Food 20k",
-            quick_grab: "+ Grab 30k",
-            quick_check: "Check My Money",
-            quick_roast: "🔥 Roast Cashflow",
-            top_category: "Top Category",
-            new_category_pro: "🔒 New Category",
-            recent_activity: "Recent Activity",
-            financial_report: "Financial Report",
-            export_csv: "📊 Export CSV",
-            download_pdf: "📄 Download e-Statement",
-            expense_distribution: "Expense Distribution",
-            edit_profile_title: "Profile Settings",
-            change_photo: "Choose Photo",
-            photo_hint: "JPG/PNG format max. 2MB",
-            profile_name: "Full Name",
-            profile_wa: "WhatsApp Number (PRO BIZ)",
-            wa_hint: "✅ AI Smart Nudges Active",
-            security_settings: "Security & Password",
-            old_password_placeholder: "Old Password",
-            new_password_placeholder: "New Password",
-            cancel: "Cancel",
-            save_changes: "Save Changes",
-            profile_menu: "⚙️ Profile Settings",
-            logout_menu: "🚪 Log Out",
-            free_badge: "FREE",
-            pro_badge: "PRO",
-            probiz_badge: "PRO BIZ",
-            sisa_kuota: "⚠️ Free transaction quota remaining this month: ",
-            transaksi: " transactions.",
-            upgrade_pro: "Upgrade Pro (Starts Rp 9,900)",
-            notif_logout: "Your session has ended for security due to inactivity for 5 minutes.",
-            no_tx: "No transactions yet 💸",
-            saving_rate_prefix: "Saving Rate ",
-            new_account: "New Account",
-            growing: "Growing",
-            stable: "Stable",
-            burn_mode: "Burn Mode",
-            health_sehat: "Healthy. Wallet is safe.",
-            health_stabil: "Quite stable.",
-            health_warning: "Warning. Check expenses.",
-            health_kritis: "Critical. Spend less."
-        }
+        id: { total_balance: "Total Saldo (Semua Dompet)", income: "Pemasukan", expense: "Pengeluaran", spending_coach: "✨ Asisten Keuangan AI", health_score: "Skor Kesehatan", add_tx_ask_ai: "Tambah Transaksi / Tanya AI", wallet_utama: "👛 Dompet Utama (Tunai)", add_wallet_pro: "🔒 + Tambah Dompet/Rekening (PRO)", send_btn: "Kirim", ask_ai_btn: "Tanya AI", input_placeholder: "contoh: fomo memecoin 500k atau roast gue", quick_eat: "+ Makan 20k", quick_grab: "+ Grab 30k", quick_check: "Cek Duit Gue", quick_roast: "🔥 Roast Cashflow", top_category: "Kategori Teratas", new_category_pro: "🔒 Kategori Baru", recent_activity: "Aktivitas Terakhir", financial_report: "Laporan Finansial", export_csv: "📊 Ekspor CSV", download_pdf: "📄 Unduh e-Statement", expense_distribution: "Distribusi Pengeluaran", edit_profile_title: "Pengaturan Profil", change_photo: "Pilih Foto", photo_hint: "Format JPG/PNG maks. 2MB", profile_name: "Nama Lengkap", profile_wa: "Nomor WhatsApp (PRO BIZ)", wa_hint: "✅ AI Smart Nudges Aktif", security_settings: "Keamanan & Password", old_password_placeholder: "Password Lama", new_password_placeholder: "Password Baru", cancel: "Batal", save_changes: "Simpan Perubahan", profile_menu: "⚙️ Pengaturan Profil", logout_menu: "🚪 Keluar Akun", free_badge: "GRATIS", pro_badge: "PRO", probiz_badge: "PRO BIZ", sisa_kuota: "⚠️ Sisa kuota catatan gratis bulan ini: ", transaksi: " transaksi.", upgrade_pro: "Upgrade Pro (Mulai Rp 9.900)", notif_logout: "Sesi Anda telah berakhir demi keamanan karena tidak ada aktivitas selama 5 menit.", no_tx: "Belum ada transaksi 💸", saving_rate_prefix: "Rasio Tabungan ", new_account: "Akun Baru", growing: "Bertumbuh", stable: "Stabil", burn_mode: "Boros", health_sehat: "Sehat. Dompet aman.", health_stabil: "Lumayan stabil.", health_warning: "Peringatan. Cek pengeluaran.", health_kritis: "Kritis. Kurangi nongkrong." },
+        en: { total_balance: "Total Balance (All Wallets)", income: "Income", expense: "Expense", spending_coach: "✨ AI Spending Coach", health_score: "Health Score", add_tx_ask_ai: "Add Transaction / Ask AI", wallet_utama: "👛 Main Wallet (Cash)", add_wallet_pro: "🔒 + Add Wallet/Account (PRO)", send_btn: "Send", ask_ai_btn: "Ask AI", input_placeholder: "e.g., fomo memecoin 500k or roast me", quick_eat: "+ Food 20k", quick_grab: "+ Grab 30k", quick_check: "Check My Money", quick_roast: "🔥 Roast Cashflow", top_category: "Top Category", new_category_pro: "🔒 New Category", recent_activity: "Recent Activity", financial_report: "Financial Report", export_csv: "📊 Export CSV", download_pdf: "📄 Download e-Statement", expense_distribution: "Expense Distribution", edit_profile_title: "Profile Settings", change_photo: "Choose Photo", photo_hint: "JPG/PNG format max. 2MB", profile_name: "Full Name", profile_wa: "WhatsApp Number (PRO BIZ)", wa_hint: "✅ AI Smart Nudges Active", security_settings: "Security & Password", old_password_placeholder: "Old Password", new_password_placeholder: "New Password", cancel: "Cancel", save_changes: "Save Changes", profile_menu: "⚙️ Profile Settings", logout_menu: "🚪 Log Out", free_badge: "FREE", pro_badge: "PRO", probiz_badge: "PRO BIZ", sisa_kuota: "⚠️ Free transaction quota remaining this month: ", transaksi: " transactions.", upgrade_pro: "Upgrade Pro (Starts Rp 9,900)", notif_logout: "Your session has ended for security due to inactivity for 5 minutes.", no_tx: "No transactions yet 💸", saving_rate_prefix: "Saving Rate ", new_account: "New Account", growing: "Growing", stable: "Stable", burn_mode: "Burn Mode", health_sehat: "Healthy. Wallet is safe.", health_stabil: "Quite stable.", health_warning: "Warning. Check expenses.", health_kritis: "Critical. Spend less." }
     };
 
     function updateLocalization() {
         const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
-        
-        document.querySelectorAll('[data-i18n]').forEach(element => {
-            const key = element.getAttribute('data-i18n');
-            if (langDictionary[currentLang] && langDictionary[currentLang][key]) {
-                element.innerText = langDictionary[currentLang][key];
-            }
-        });
-
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-            const key = element.getAttribute('data-i18n-placeholder');
-            if (langDictionary[currentLang] && langDictionary[currentLang][key]) {
-                element.setAttribute('placeholder', langDictionary[currentLang][key]);
-            }
-        });
-
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            if (btn.getAttribute('onclick').includes(currentLang)) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-
+        document.querySelectorAll('[data-i18n]').forEach(element => { if (langDictionary[currentLang][element.getAttribute('data-i18n')]) element.innerText = langDictionary[currentLang][element.getAttribute('data-i18n')]; });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => { if (langDictionary[currentLang][element.getAttribute('data-i18n-placeholder')]) element.setAttribute('placeholder', langDictionary[currentLang][element.getAttribute('data-i18n-placeholder')]); });
+        document.querySelectorAll('.lang-btn').forEach(btn => { if (btn.getAttribute('onclick').includes(currentLang)) btn.classList.add('active'); else btn.classList.remove('active'); });
         const textInput = document.getElementById("textInput");
-        if (textInput && textInput.placeholder !== "Kuota Habis. Silakan Upgrade PRO 🔒" && textInput.placeholder !== "Quota Full. Please Upgrade to PRO 🔒") {
-            textInput.placeholder = langDictionary[currentLang].input_placeholder;
-        }
-
+        if (textInput && textInput.placeholder !== "Kuota Habis. Silakan Upgrade PRO 🔒" && textInput.placeholder !== "Quota Full. Please Upgrade to PRO 🔒") textInput.placeholder = langDictionary[currentLang].input_placeholder;
         loadUserProfile();
     }
 
-    function changeLanguage(lang) {
-        localStorage.setItem('rantauflow_lang', lang);
-        updateLocalization();
-        loadData();
-    }
+    function changeLanguage(lang) { localStorage.setItem('rantauflow_lang', lang); updateLocalization(); loadData(); }
 
-    // ==================== PROFILE DROPDOWN LOGIC ====================
-    function toggleDropdown(event) {
-        if (event) event.stopPropagation();
-        const dropdown = document.getElementById("profileDropdown");
-        dropdown.classList.toggle("active");
-    }
+    function toggleDropdown(event) { if (event) event.stopPropagation(); document.getElementById("profileDropdown").classList.toggle("active"); }
+    window.addEventListener("click", function(e) { const dropdown = document.getElementById("profileDropdown"); const profileContainer = document.querySelector(".profile-container"); if (dropdown && dropdown.classList.contains("active") && !profileContainer.contains(e.target)) dropdown.classList.remove("active"); });
 
-    window.addEventListener("click", function(e) {
-        const dropdown = document.getElementById("profileDropdown");
-        const profileContainer = document.querySelector(".profile-container");
-        if (dropdown && dropdown.classList.contains("active") && !profileContainer.contains(e.target)) {
-            dropdown.classList.remove("active");
-        }
-    });
-
-    // ==================== AVATAR DYNAMICS ====================
     async function loadUserProfile() {
         try {
             const res = await fetch(`${API_URL}/profile?userId=${userId}`);
@@ -702,11 +402,11 @@
                 localStorage.setItem('rf_user_email', data.user.email || '');
                 localStorage.setItem('rf_user_avatar', data.user.avatar || '');
                 localStorage.setItem('rf_tier_level', data.user.tier_level || 0);
+                localStorage.setItem('rf_aff_code', data.user.affiliate_code || '');
+                localStorage.setItem('rf_aff_balance', data.user.affiliate_balance || 0);
                 if (data.user.wa_number !== undefined) localStorage.setItem('rf_wa_number', data.user.wa_number || '');
             }
-        } catch (e) {
-            console.warn("Menggunakan data lokal untuk profile cache:", e);
-        }
+        } catch (e) { console.warn("Cache fallback:", e); }
 
         const name = localStorage.getItem('rf_user_name') || 'User';
         const email = localStorage.getItem('rf_user_email') || 'user@rantauflow.app';
@@ -718,554 +418,191 @@
 
         const badgeEl = document.getElementById("dropdownUserBadge");
         const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
-        if (tierLevel === 2) {
-            badgeEl.className = "dropdown-badge badge-probiz";
-            badgeEl.innerText = langDictionary[currentLang].probiz_badge;
-        } else if (tierLevel === 1) {
-            badgeEl.className = "dropdown-badge badge-pro";
-            badgeEl.innerText = langDictionary[currentLang].pro_badge;
-        } else {
-            badgeEl.className = "dropdown-badge badge-free";
-            badgeEl.innerText = langDictionary[currentLang].free_badge;
-        }
+        if (tierLevel === 2) { badgeEl.className = "dropdown-badge badge-probiz"; badgeEl.innerText = langDictionary[currentLang].probiz_badge; } 
+        else if (tierLevel === 1) { badgeEl.className = "dropdown-badge badge-pro"; badgeEl.innerText = langDictionary[currentLang].pro_badge; } 
+        else { badgeEl.className = "dropdown-badge badge-free"; badgeEl.innerText = langDictionary[currentLang].free_badge; }
 
         renderAvatar(name, email, avatar);
     }
 
     function renderAvatar(name, email, avatarUrl) {
-        const initials = generateInitials(name, email);
-        const avatarContainers = [
-            document.getElementById("topBarAvatar"),
-            document.getElementById("dropdownAvatarPreview"),
-            document.getElementById("modalAvatarPreview")
-        ];
-
-        avatarContainers.forEach(container => {
-            if (!container) return;
-            if (avatarUrl) {
-                container.innerHTML = `<img src="${API_URL}${avatarUrl}" alt="Avatar">`;
-            } else {
-                container.innerHTML = initials;
-            }
+        const initials = (name.trim() !== "") ? (name.trim().split(" ").length >= 2 ? name.trim().split(" ")[0][0] + name.trim().split(" ")[1][0] : name.trim().split(" ")[0][0]).toUpperCase() : (email.split("@")[0].substring(0, 2).toUpperCase() || "AN");
+        [document.getElementById("topBarAvatar"), document.getElementById("dropdownAvatarPreview"), document.getElementById("modalAvatarPreview")].forEach(container => {
+            if (container) container.innerHTML = avatarUrl ? `<img src="${API_URL}${avatarUrl}" alt="Avatar">` : initials;
         });
     }
 
-    function generateInitials(name, email) {
-        if (name && name.trim() !== "") {
-            const words = name.trim().split(" ");
-            if (words.length >= 2) {
-                return (words[0][0] + words[1][0]).toUpperCase();
-            }
-            return words[0][0].toUpperCase();
-        }
-        if (email) {
-            const prefix = email.split("@")[0];
-            return prefix.substring(0, 2).toUpperCase();
-        }
-        return "AN";
-    }
-
-    // ==================== EDIT PROFILE ACTION ====================
     function openProfileModal() {
         document.getElementById("profileNameInput").value = localStorage.getItem('rf_user_name') || '';
         
-        // FASE 3: Logika Kunci WhatsApp (Hanya Terbuka untuk PRO BIZ / Tier 2)
+        const tierLevel = parseInt(localStorage.getItem('rf_tier_level')) || 0;
         const waInput = document.getElementById("profileWaInput");
         const waLockBtn = document.getElementById("waLockBtn");
         const waHintText = document.getElementById("waHintText");
-        const tierLevel = parseInt(localStorage.getItem('rf_tier_level')) || 0;
-
         waInput.value = localStorage.getItem('rf_wa_number') || '';
         
-        if (tierLevel === 2) {
-            waInput.disabled = false;
-            waLockBtn.style.display = "none";
-            waHintText.style.display = "block";
-        } else {
-            waInput.disabled = true;
-            waLockBtn.style.display = "flex";
-            waHintText.style.display = "none";
-        }
+        if (tierLevel === 2) { waInput.disabled = false; waLockBtn.style.display = "none"; waHintText.style.display = "block"; } 
+        else { waInput.disabled = true; waLockBtn.style.display = "flex"; waHintText.style.display = "none"; }
+
+        // FASE 4: Render UI Afiliasi
+        const affCode = localStorage.getItem('rf_aff_code') || '';
+        const affBal = parseInt(localStorage.getItem('rf_aff_balance')) || 0;
+        const hostUrl = window.location.origin; // Mengambil domain (misal: https://rantauflow.app)
+        
+        document.getElementById("affBalance").innerText = "Rp " + new Intl.NumberFormat("id-ID").format(affBal);
+        if (affCode) document.getElementById("refLinkInput").value = `${hostUrl}/login.html?ref=${affCode}`;
 
         document.getElementById("profileModal").classList.add("active");
         toggleDropdown(false);
     }
 
-    function closeProfileModal() {
-        document.getElementById("profileModal").classList.remove("active");
-        document.getElementById("oldPasswordInput").value = "";
-        document.getElementById("newPasswordInput").value = "";
-        document.getElementById("avatarFileInput").value = "";
-        selectedAvatarFile = null;
+    function copyRefLink() {
+        const input = document.getElementById("refLinkInput");
+        input.select(); document.execCommand("copy");
+        alert("Link Referral disalin! Sebarkan ke sosial media kamu!");
     }
+
+    function closeProfileModal() { document.getElementById("profileModal").classList.remove("active"); document.getElementById("oldPasswordInput").value = ""; document.getElementById("newPasswordInput").value = ""; document.getElementById("avatarFileInput").value = ""; selectedAvatarFile = null; }
 
     let selectedAvatarFile = null;
     function previewAvatar(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        selectedAvatarFile = file;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById("modalAvatarPreview").innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-        }
-        reader.readAsDataURL(file);
+        const file = event.target.files[0]; if (!file) return; selectedAvatarFile = file;
+        const reader = new FileReader(); reader.onload = function(e) { document.getElementById("modalAvatarPreview").innerHTML = `<img src="${e.target.result}">`; }; reader.readAsDataURL(file);
     }
 
     async function saveUserProfile() {
-        const saveBtn = document.getElementById("saveProfileBtn");
-        const originalText = saveBtn.innerText;
-        saveBtn.innerText = "Saving...";
-        saveBtn.disabled = true;
-
-        const newName = document.getElementById("profileNameInput").value.trim();
-        const waNumber = document.getElementById("profileWaInput").value.trim();
-        const oldPassword = document.getElementById("oldPasswordInput").value;
-        const newPassword = document.getElementById("newPasswordInput").value;
-
+        const saveBtn = document.getElementById("saveProfileBtn"); const originalText = saveBtn.innerText; saveBtn.innerText = "Saving..."; saveBtn.disabled = true;
         try {
-            const formData = new FormData();
-            formData.append("userId", userId);
-            formData.append("name", newName);
-            formData.append("waNumber", waNumber); // Data WA Terkirim
-            
-            if (oldPassword && newPassword) {
-                formData.append("oldPassword", oldPassword);
-                formData.append("newPassword", newPassword);
-            }
-            if (selectedAvatarFile) {
-                formData.append("avatar", selectedAvatarFile);
-            }
+            const formData = new FormData(); formData.append("userId", userId); 
+            formData.append("name", document.getElementById("profileNameInput").value.trim()); 
+            formData.append("waNumber", document.getElementById("profileWaInput").value.trim());
+            const oldPw = document.getElementById("oldPasswordInput").value; const newPw = document.getElementById("newPasswordInput").value;
+            if (oldPw && newPw) { formData.append("oldPassword", oldPw); formData.append("newPassword", newPw); }
+            if (selectedAvatarFile) formData.append("avatar", selectedAvatarFile);
 
-            const res = await fetch(`${API_URL}/api/user/update-profile`, {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await res.json();
+            const data = await fetch(`${API_URL}/api/user/update-profile`, { method: "POST", body: formData }).then(r => r.json());
             if (data.success) {
-                alert("Profil berhasil diperbarui!");
-                if (data.user) {
-                    localStorage.setItem('rf_user_name', data.user.name || '');
-                    if (data.user.avatar) localStorage.setItem('rf_user_avatar', data.user.avatar || '');
-                    if (data.user.wa_number !== undefined) localStorage.setItem('rf_wa_number', data.user.wa_number || '');
-                }
-                loadUserProfile();
-                closeProfileModal();
-                loadData();
-            } else {
-                alert("Gagal memperbarui profil: " + data.message);
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Error jaringan saat menyimpan profil.");
-        } finally {
-            saveBtn.innerText = originalText;
-            saveBtn.disabled = false;
-        }
+                alert("Profil diperbarui!");
+                if (data.user) { localStorage.setItem('rf_user_name', data.user.name || ''); if (data.user.avatar) localStorage.setItem('rf_user_avatar', data.user.avatar); if (data.user.wa_number) localStorage.setItem('rf_wa_number', data.user.wa_number); }
+                loadUserProfile(); closeProfileModal(); loadData();
+            } else alert("Gagal: " + data.message);
+        } catch (err) { alert("Error jaringan."); } finally { saveBtn.innerText = originalText; saveBtn.disabled = false; }
     }
 
-    // ==================== CORE PLATFORM FUNCTIONALITY ====================
-    window.rawTransactions = [];
-    window.summaryData = {};
-
+    window.rawTransactions = []; window.summaryData = {};
     async function loadData() {
         if (!userId) return; 
-
         try {
-            const tierLevel = parseInt(localStorage.getItem("rf_tier_level")) || parseInt(localStorage.getItem("rf_is_pro")) || 0;
-            const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
+            const tierLevel = parseInt(localStorage.getItem("rf_tier_level")) || 0; const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
+            if (tierLevel >= 1) { const proBadge = document.getElementById("proBadge"); const limitBanner = document.getElementById("limitBanner"); if (proBadge) { proBadge.style.display = "inline-block"; if (tierLevel === 2) { proBadge.innerText = "PRO BIZ"; proBadge.style.background = "linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.05))"; proBadge.style.borderColor = "rgba(52,211,153,0.4)"; proBadge.style.color = "var(--accent-green)"; } else { proBadge.innerText = "PRO"; } } if (limitBanner) limitBanner.style.display = "none"; }
 
-            if (tierLevel >= 1) {
-                const proBadge = document.getElementById("proBadge");
-                const limitBanner = document.getElementById("limitBanner");
-                
-                if (proBadge) {
-                    proBadge.style.display = "inline-block";
-                    if (tierLevel === 2) {
-                        proBadge.innerText = "PRO BIZ";
-                        proBadge.style.background = "linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.05))";
-                        proBadge.style.borderColor = "rgba(52,211,153,0.4)";
-                        proBadge.style.color = "var(--accent-green)";
-                    } else {
-                        proBadge.innerText = "PRO";
-                    }
-                }
-                if (limitBanner) limitBanner.style.display = "none";
-            }
-
-            const insight = await fetch(`${API_URL}/insight?userId=${userId}`).then(r=>r.json());
-            document.getElementById("insight").innerHTML = insight.insight.join("<br>");
-
+            const insight = await fetch(`${API_URL}/insight?userId=${userId}`).then(r=>r.json()); document.getElementById("insight").innerHTML = insight.insight.join("<br>");
             const summary = await fetch(`${API_URL}/summary?userId=${userId}`).then(r=>r.json());
-            
-            if (summary.error) {
-                alert("LAPORAN ERROR SERVER: " + summary.error);
-                localStorage.removeItem('rf_user_id'); 
-                window.location.href = 'login.html';   
-                return; 
-            }
-
-            window.rawTransactions = summary.transactions || [];
-            window.summaryData = summary; 
+            if (summary.error) { alert("ERROR: " + summary.error); localStorage.removeItem('rf_user_id'); window.location.href = 'login.html'; return; }
+            window.rawTransactions = summary.transactions || []; window.summaryData = summary; 
 
             if (window.rawTransactions.length > 0) {
-                let catTotals = {};
-                window.rawTransactions.forEach(tx => {
-                    if(tx.type === 'expense') {
-                        catTotals[tx.category] = (catTotals[tx.category] || 0) + tx.amount;
-                    }
-                });
-                
-                let topCat = "Belum Ada";
-                let maxVal = 0;
-                let chartData = [];
-                for (let [cat, val] of Object.entries(catTotals)) {
-                    chartData.push({category: cat, total: val});
-                    if(val > maxVal) { maxVal = val; topCat = cat; }
-                }
-                
+                let catTotals = {}; window.rawTransactions.forEach(tx => { if(tx.type === 'expense') catTotals[tx.category] = (catTotals[tx.category] || 0) + tx.amount; });
+                let topCat = "Belum Ada", maxVal = 0, chartData = [];
+                for (let [cat, val] of Object.entries(catTotals)) { chartData.push({category: cat, total: val}); if(val > maxVal) { maxVal = val; topCat = cat; } }
                 document.getElementById("topCategory").innerText = `${topCat.charAt(0).toUpperCase() + topCat.slice(1)} (Rp${new Intl.NumberFormat("id-ID").format(maxVal)})`;
                 renderCharts({ data: chartData });
-            } else {
-                document.getElementById("topCategory").innerText = currentLang === 'id' ? "Belum Ada Data" : "No Data Available";
-                renderCharts({ data: [] });
-            }
+            } else { document.getElementById("topCategory").innerText = currentLang === 'id' ? "Belum Ada Data" : "No Data Available"; renderCharts({ data: [] }); }
 
             if (tierLevel === 0) {
-              const txCount = window.rawTransactions.length;
-              const maxFree = 30;
-              let sisa = maxFree - txCount;
-              if(sisa < 0) sisa = 0;
-              
-              document.getElementById("limitBanner").style.display = "block";
-              const bannerEl = document.getElementById("limitBanner");
-              bannerEl.innerHTML = `
-                  ${langDictionary[currentLang].sisa_kuota} <strong>${sisa}</strong> ${langDictionary[currentLang].transaksi} <br>
-                  <a href="#" onclick="checkPremiumAccess('limit')" style="color: var(--accent-blue); text-decoration: underline; font-weight: bold; margin-left: 4px; display: inline-block; margin-top: 4px;">${langDictionary[currentLang].upgrade_pro}</a>
-              `;
-              
-              if(sisa === 0) {
-                document.getElementById("textInput").disabled = true;
-                document.getElementById("sendBtn").disabled = true;
-                document.getElementById("textInput").placeholder = currentLang === 'id' ? "Kuota Habis. Silakan Upgrade PRO 🔒" : "Quota Full. Please Upgrade to PRO 🔒";
-              }
+              const sisa = Math.max(0, 30 - window.rawTransactions.length); document.getElementById("limitBanner").style.display = "block";
+              document.getElementById("limitBanner").innerHTML = `${langDictionary[currentLang].sisa_kuota} <strong>${sisa}</strong> ${langDictionary[currentLang].transaksi} <br><a href="#" onclick="checkPremiumAccess('limit')" style="color: var(--accent-blue); text-decoration: underline; font-weight: bold; margin-left: 4px; display: inline-block; margin-top: 4px;">${langDictionary[currentLang].upgrade_pro}</a>`;
+              if(sisa === 0) { document.getElementById("textInput").disabled = true; document.getElementById("sendBtn").disabled = true; document.getElementById("textInput").placeholder = currentLang === 'id' ? "Kuota Habis. Silakan Upgrade PRO 🔒" : "Quota Full. Please Upgrade to PRO 🔒"; }
             }
 
-            const historyBox = document.getElementById("history");
-            historyBox.innerHTML = "";
-            if (summary.recent.length === 0) {
-               historyBox.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 14px;">${langDictionary[currentLang].no_tx}</div>`;
-            } else {
-              summary.recent.forEach(tx => {
-                historyBox.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;">
-                  <span style="color:var(--text-main); text-transform:capitalize;">${tx.category}</span>
-                  <span style="color:var(--text-muted); font-family:monospace;">- Rp${tx.amount.toLocaleString("id-ID")}</span>
-                </div>`;
-              });
-            }
-
+            const historyBox = document.getElementById("history"); historyBox.innerHTML = "";
+            if (summary.recent.length === 0) historyBox.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size: 14px;">${langDictionary[currentLang].no_tx}</div>`;
+            else summary.recent.forEach(tx => { historyBox.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;"><span style="color:var(--text-main); text-transform:capitalize;">${tx.category}</span><span style="color:var(--text-muted); font-family:monospace;">- Rp${tx.amount.toLocaleString("id-ID")}</span></div>`; });
             if(summary.recurring?.length) document.getElementById("insight").innerHTML += "<br><br><span style='color:var(--accent-red)'>⚠️ Warning: </span>" + summary.recurring.join("<br>");
 
             const format = (n) => new Intl.NumberFormat("id-ID").format(n);
-            const balanceEl = document.getElementById("balance");
-            balanceEl.innerText = format(summary.balance || insight.balance || 0);
-            balanceEl.style.color = (insight.balance < 0) ? "var(--accent-red)" : "var(--text-main)";
-
-            document.getElementById("income").innerText = format(summary.income || insight.income || 0);
-            document.getElementById("expense").innerText = format(summary.expense || insight.expense || 0);
-
+            document.getElementById("balance").innerText = format(summary.balance || insight.balance || 0); document.getElementById("balance").style.color = (insight.balance < 0) ? "var(--accent-red)" : "var(--text-main)";
+            document.getElementById("income").innerText = format(summary.income || insight.income || 0); document.getElementById("expense").innerText = format(summary.expense || insight.expense || 0);
             let savingRate = summary.income > 0 ? Math.round(((summary.income - summary.expense) / summary.income) * 100) : 0;
             document.getElementById("savingRate").innerText = langDictionary[currentLang].saving_rate_prefix + (isNaN(savingRate) ? "0" : savingRate) + "%";
-
+            
             const cashStatusEl = document.getElementById("cashStatus");
-            if (summary.income === 0 && summary.expense === 0) {
-              cashStatusEl.innerText = langDictionary[currentLang].new_account; cashStatusEl.style.color = "var(--text-muted)"; cashStatusEl.style.borderColor = "var(--glass-border)";
-            } else if(savingRate > 30) {
-              cashStatusEl.innerText = langDictionary[currentLang].growing; cashStatusEl.style.color = "var(--accent-green)"; cashStatusEl.style.borderColor = "rgba(52,211,153,0.3)";
-            } else if(savingRate > 10) {
-              cashStatusEl.innerText = langDictionary[currentLang].stable; cashStatusEl.style.color = "var(--accent-blue)"; cashStatusEl.style.borderColor = "rgba(56,189,248,0.3)";
-            } else {
-              cashStatusEl.innerText = langDictionary[currentLang].burn_mode; cashStatusEl.style.color = "var(--accent-red)"; cashStatusEl.style.borderColor = "rgba(248,113,113,0.3)";
-            }
+            if (summary.income === 0 && summary.expense === 0) { cashStatusEl.innerText = langDictionary[currentLang].new_account; cashStatusEl.style.color = "var(--text-muted)"; cashStatusEl.style.borderColor = "var(--glass-border)"; } 
+            else if(savingRate > 30) { cashStatusEl.innerText = langDictionary[currentLang].growing; cashStatusEl.style.color = "var(--accent-green)"; cashStatusEl.style.borderColor = "rgba(52,211,153,0.3)"; } 
+            else if(savingRate > 10) { cashStatusEl.innerText = langDictionary[currentLang].stable; cashStatusEl.style.color = "var(--accent-blue)"; cashStatusEl.style.borderColor = "rgba(56,189,248,0.3)"; } 
+            else { cashStatusEl.innerText = langDictionary[currentLang].burn_mode; cashStatusEl.style.color = "var(--accent-red)"; cashStatusEl.style.borderColor = "rgba(248,113,113,0.3)"; }
 
-            document.getElementById("healthScore").innerText = summary.healthScore + "/100";
-            const healthStatusEl = document.getElementById("healthStatus");
-            if(summary.healthScore >= 75) healthStatusEl.innerText = langDictionary[currentLang].health_sehat;
-            else if(summary.healthScore >= 55) healthStatusEl.innerText = langDictionary[currentLang].health_stabil;
-            else if(summary.healthScore >= 35) healthStatusEl.innerText = langDictionary[currentLang].health_warning;
-            else healthStatusEl.innerText = langDictionary[currentLang].health_kritis;
-
-        } catch (error) { console.error("Error di loadData:", error); }
+            document.getElementById("healthScore").innerText = summary.healthScore + "/100"; const healthStatusEl = document.getElementById("healthStatus");
+            if(summary.healthScore >= 75) healthStatusEl.innerText = langDictionary[currentLang].health_sehat; else if(summary.healthScore >= 55) healthStatusEl.innerText = langDictionary[currentLang].health_stabil; else if(summary.healthScore >= 35) healthStatusEl.innerText = langDictionary[currentLang].health_warning; else healthStatusEl.innerText = langDictionary[currentLang].health_kritis;
+        } catch (error) { console.error("Error:", error); }
     }
 
     function renderCharts(categoryData) {
-      const labels = categoryData.data.map(i=>i.category);
-      const values = categoryData.data.map(i=>i.total);
-      const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
-
-      const categoryMap = currentLang === 'id' ? { 
-          food:"Makan", transport:"Transport", shopping:"Belanja", lifestyle:"Nongkrong", investment:"Investasi/Trading", other:"Lainnya" 
-      } : { 
-          food:"Food", transport:"Transportation", shopping:"Shopping", lifestyle:"Lifestyle", investment:"Investment/Trading", other:"Others" 
-      };
-
-      const ctx = document.getElementById("myChart").getContext("2d");
-      if(window.myChartInstance) window.myChartInstance.destroy();
-      window.myChartInstance = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: labels.map(l => categoryMap[l] || l),
-          datasets: [{ data: values, borderColor: "#070B14", borderWidth: 4, backgroundColor: ["#34D399", "#38BDF8", "#F87171", "#FBBF24", "#A78BFA"], hoverOffset: 4 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: "#94A3B8" } } } }
-      });
-
-      const trendCtx = document.getElementById("cashTrend");
-      if(window.cashLine) window.cashLine.destroy();
-      let gradient = trendCtx.getContext("2d").createLinearGradient(0, 0, 0, 70);
-      gradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)'); gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
-      window.cashLine = new Chart(trendCtx, {
-        type: "line",
-        data: { labels: ["W1","W2","W3","W4","W5","W6"], datasets: [{ data: [14, 18, 17, 24, 21, 29], borderColor: "#38BDF8", backgroundColor: gradient, borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, layout: { padding: 0 } }
-      });
+      const labels = categoryData.data.map(i=>i.category); const values = categoryData.data.map(i=>i.total); const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
+      const categoryMap = currentLang === 'id' ? { food:"Makan", transport:"Transport", shopping:"Belanja", lifestyle:"Nongkrong", investment:"Investasi/Trading", other:"Lainnya" } : { food:"Food", transport:"Transportation", shopping:"Shopping", lifestyle:"Lifestyle", investment:"Investment/Trading", other:"Others" };
+      const ctx = document.getElementById("myChart").getContext("2d"); if(window.myChartInstance) window.myChartInstance.destroy();
+      window.myChartInstance = new Chart(ctx, { type: "doughnut", data: { labels: labels.map(l => categoryMap[l] || l), datasets: [{ data: values, borderColor: "#070B14", borderWidth: 4, backgroundColor: ["#34D399", "#38BDF8", "#F87171", "#FBBF24", "#A78BFA"] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: "#94A3B8" } } } } });
+      const trendCtx = document.getElementById("cashTrend"); if(window.cashLine) window.cashLine.destroy(); let gradient = trendCtx.getContext("2d").createLinearGradient(0, 0, 0, 70); gradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)'); gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
+      window.cashLine = new Chart(trendCtx, { type: "line", data: { labels: ["W1","W2","W3","W4","W5","W6"], datasets: [{ data: [14, 18, 17, 24, 21, 29], borderColor: "#38BDF8", backgroundColor: gradient, borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, layout: { padding: 0 } } });
     }
 
     function checkPremiumAccess(actionType) {
-      const tierLevel = parseInt(localStorage.getItem("rf_tier_level")) || parseInt(localStorage.getItem("rf_is_pro")) || 0;
-      const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
-      
-      // Khusus Verifikasi Tombol Gembok WA di Profil
-      if (actionType === 'wa' && tierLevel < 2) {
-         let msg = currentLang === 'en' ? "WhatsApp & AI Smart Nudges feature is exclusive to PRO BIZ plan." : "Fitur Integrasi WhatsApp & AI Smart Nudges eksklusif untuk paket PRO BIZ.";
-         document.getElementById("paywallText").innerText = msg;
-         document.getElementById("paywallModal").classList.add("active");
-         return;
-      }
-
+      const tierLevel = parseInt(localStorage.getItem("rf_tier_level")) || 0; const currentLang = localStorage.getItem('rantauflow_lang') || 'id';
+      if (actionType === 'wa' && tierLevel < 2) { document.getElementById("paywallText").innerText = currentLang === 'en' ? "WhatsApp & AI Smart Nudges feature is exclusive to PRO BIZ plan." : "Fitur Integrasi WhatsApp & AI Smart Nudges eksklusif untuk paket PRO BIZ."; document.getElementById("paywallModal").classList.add("active"); return; }
       if (tierLevel < 1) {
         let msg = "Fitur ini khusus pengguna RantauFlow PRO atau PRO BUSINESS.";
-        if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus pengguna berbayar.";
-        if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus fitur berbayar.";
-        if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu eksklusif di paket berbayar.";
-        if (actionType === 'limit') msg = "Pilih paket langganan di bawah untuk mencatat transaksi tanpa batas (unlimited).";
-
-        document.getElementById("paywallText").innerText = msg;
-        document.getElementById("paywallModal").classList.add("active");
-        
-        if(actionType === 'wallet' && document.getElementById("walletSelect").value === 'new') {
-            document.getElementById("walletSelect").value = 'utama';
-        }
+        if (actionType === 'csv' || actionType === 'pdf') msg = "Laporan PDF e-Statement & Export CSV khusus pengguna berbayar."; else if (actionType === 'wallet') msg = "Pantau banyak dompet/rekening sekaligus khusus fitur berbayar."; else if (actionType === 'kategori') msg = "Buat kategori pengeluaran sesukamu eksklusif di paket berbayar."; else if (actionType === 'limit') msg = "Pilih paket langganan di bawah untuk mencatat transaksi tanpa batas (unlimited).";
+        document.getElementById("paywallText").innerText = msg; document.getElementById("paywallModal").classList.add("active"); if(actionType === 'wallet' && document.getElementById("walletSelect").value === 'new') document.getElementById("walletSelect").value = 'utama';
         return;
       }
-      
-      if (actionType === 'csv') exportToCSV();
-      if (actionType === 'pdf') exportToPDF();
+      if (actionType === 'csv') exportToCSV(); if (actionType === 'pdf') exportToPDF();
     }
-
-    function handleWalletChange() {
-      const selector = document.getElementById("walletSelect");
-      if(selector.value === 'new') {
-        checkPremiumAccess('wallet');
-      }
-    }
-
+    function handleWalletChange() { if(document.getElementById("walletSelect").value === 'new') checkPremiumAccess('wallet'); }
     function closeModal() { document.getElementById("paywallModal").classList.remove("active"); }
 
     function exportToCSV() {
       if (window.rawTransactions.length === 0) return alert("Tidak ada data transaksi.");
-
       let csvContent = "Tanggal,Kategori,Tipe Transaksi,Nominal (IDR)\n";
-      window.rawTransactions.forEach(tx => {
-        let date = new Date(tx.created_at).toLocaleDateString("id-ID");
-        csvContent += `${date},${tx.category},${tx.type},${tx.amount}\n`;
-      });
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url); link.setAttribute("download", "RantauFlow_Data_PRO.csv");
-      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      window.rawTransactions.forEach(tx => { csvContent += `${new Date(tx.created_at).toLocaleDateString("id-ID")},${tx.category},${tx.type},${tx.amount}\n`; });
+      const link = document.createElement("a"); link.setAttribute("href", URL.createObjectURL(new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }))); link.setAttribute("download", "RantauFlow_Data_PRO.csv"); document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
-
     function exportToPDF() {
-      const btn = document.getElementById('pdfBtn');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = "⏳ Generating...";
-      btn.disabled = true;
-
-      window.scrollTo(0, 0);
-      document.body.classList.add('is-printing');
-
-      const formalReport = document.createElement("div");
-      formalReport.id = "formalReportPage";
-      formalReport.style.cssText = "background: #ffffff; color: #000000; width: 1000px; box-sizing: border-box; padding: 60px 80px; page-break-before: always; margin: 0;";
-      
+      const btn = document.getElementById('pdfBtn'); const originalText = btn.innerHTML; btn.innerHTML = "⏳ Generating..."; btn.disabled = true; window.scrollTo(0, 0); document.body.classList.add('is-printing');
+      const formalReport = document.createElement("div"); formalReport.id = "formalReportPage"; formalReport.style.cssText = "background: #ffffff; color: #000000; width: 1000px; box-sizing: border-box; padding: 60px 80px; page-break-before: always; margin: 0;";
       const format = (n) => "Rp" + new Intl.NumberFormat("id-ID").format(n);
-      
-      let tableRows = window.rawTransactions.map(tx => {
-        let date = new Date(tx.created_at).toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' });
-        let color = tx.type === 'expense' ? '#ef4444' : '#10b981';
-        let prefix = tx.type === 'expense' ? '-' : '+';
-        return `
-          <tr style="border-bottom: 1px solid #e2e8f0; font-size: 14px;">
-            <td style="padding: 14px 10px; color: #334155;">${date}</td>
-            <td style="padding: 14px 10px; text-transform: capitalize; color: #334155; font-weight: 500;">${tx.category}</td>
-            <td style="padding: 14px 10px; text-transform: capitalize; color: #64748b;">${tx.type}</td>
-            <td style="padding: 14px 10px; text-align: right; color: ${color}; font-weight: 700;">${prefix} ${format(tx.amount)}</td>
-          </tr>
-        `;
-      }).join('');
-
-      formalReport.innerHTML = `
-        <div style="text-align: center; margin-bottom: 40px;">
-          <div style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #10b981; color: white; border-radius: 12px; font-weight: bold; font-size: 20px; margin-bottom: 16px;">RF</div>
-          <h1 style="margin: 0; color: #0f172a; font-size: 32px; font-weight: 700; letter-spacing: -1px;">RantauFlow PRO</h1>
-          <p style="margin: 6px 0 0 0; color: #64748b; font-size: 15px;">Official e-Statement by A-Tech Labs</p>
-        </div>
-        
-        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 30px;">
-          <div>
-            <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Nama Klien</p>
-            <h3 style="margin: 6px 0 0 0; color: #0f172a; font-size: 20px;">${localStorage.getItem('rf_user_name') || 'User'}</h3>
-            <p style="margin: 6px 0 0 0; color: #10b981; font-size: 13px; font-weight: 600; padding: 4px 10px; background: rgba(16,185,129,0.1); border-radius: 6px; display: inline-block;">Premium Member</p>
-          </div>
-          <div style="text-align: right;">
-            <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Total Saldo Akhir</p>
-            <h2 style="margin: 6px 0 0 0; color: #0f172a; font-size: 28px;">${format(window.summaryData.balance || 0)}</h2>
-          </div>
-        </div>
-
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-          <thead>
-            <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
-              <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tanggal</th>
-              <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Kategori</th>
-              <th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tipe</th>
-              <th style="padding: 14px 10px; text-align: right; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Nominal</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows}
-          </tbody>
-        </table>
-        
-        <div style="margin-top: 60px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-          Dokumen ini digenerate secara otomatis oleh sistem kecerdasan finansial RantauFlow.<br>
-          A-Tech Labs &copy; 2026
-        </div>
-      `;
-
-      const mainWrapper = document.getElementById('mainWrapper');
-      mainWrapper.appendChild(formalReport);
-
-      const opt = {
-        margin:       0,
-        filename:     'RantauFlow_Statement_PRO.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false, width: 1000, windowWidth: 1000 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      
-      setTimeout(() => {
-        html2pdf().set(opt).from(mainWrapper).save().then(() => {
-          mainWrapper.removeChild(formalReport);
-          document.body.classList.remove('is-printing');
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-        });
-      }, 500);
+      let tableRows = window.rawTransactions.map(tx => { return `<tr style="border-bottom: 1px solid #e2e8f0; font-size: 14px;"><td style="padding: 14px 10px; color: #334155;">${new Date(tx.created_at).toLocaleDateString("id-ID", { day: '2-digit', month: 'short', year: 'numeric' })}</td><td style="padding: 14px 10px; text-transform: capitalize; color: #334155; font-weight: 500;">${tx.category}</td><td style="padding: 14px 10px; text-transform: capitalize; color: #64748b;">${tx.type}</td><td style="padding: 14px 10px; text-align: right; color: ${tx.type === 'expense' ? '#ef4444' : '#10b981'}; font-weight: 700;">${tx.type === 'expense' ? '-' : '+'} ${format(tx.amount)}</td></tr>`; }).join('');
+      formalReport.innerHTML = `<div style="text-align: center; margin-bottom: 40px;"><div style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #10b981; color: white; border-radius: 12px; font-weight: bold; font-size: 20px; margin-bottom: 16px;">RF</div><h1 style="margin: 0; color: #0f172a; font-size: 32px; font-weight: 700; letter-spacing: -1px;">RantauFlow PRO</h1><p style="margin: 6px 0 0 0; color: #64748b; font-size: 15px;">Official e-Statement by A-Tech Labs</p></div><div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 30px;"><div><p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Nama Klien</p><h3 style="margin: 6px 0 0 0; color: #0f172a; font-size: 20px;">${localStorage.getItem('rf_user_name') || 'User'}</h3><p style="margin: 6px 0 0 0; color: #10b981; font-size: 13px; font-weight: 600; padding: 4px 10px; background: rgba(16,185,129,0.1); border-radius: 6px; display: inline-block;">Premium Member</p></div><div style="text-align: right;"><p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Total Saldo Akhir</p><h2 style="margin: 6px 0 0 0; color: #0f172a; font-size: 28px;">${format(window.summaryData.balance || 0)}</h2></div></div><table style="width: 100%; border-collapse: collapse; text-align: left;"><thead><tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;"><th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tanggal</th><th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Kategori</th><th style="padding: 14px 10px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Tipe</th><th style="padding: 14px 10px; text-align: right; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Nominal</th></tr></thead><tbody>${tableRows}</tbody></table><div style="margin-top: 60px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px;">Dokumen ini digenerate secara otomatis oleh sistem kecerdasan finansial RantauFlow.<br>A-Tech Labs &copy; 2026</div>`;
+      const mainWrapper = document.getElementById('mainWrapper'); mainWrapper.appendChild(formalReport);
+      setTimeout(() => { html2pdf().set({ margin: 0, filename: 'RantauFlow_Statement_PRO.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false, width: 1000, windowWidth: 1000 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(mainWrapper).save().then(() => { mainWrapper.removeChild(formalReport); document.body.classList.remove('is-printing'); btn.innerHTML = originalText; btn.disabled = false; }); }, 500);
     }
 
     function addMessageToUI(text, isUser = false) {
-      const chatBox = document.getElementById("chatBox");
-      const msg = document.createElement("div");
-      msg.innerText = text;
-      msg.style.padding = "10px 14px"; msg.style.borderRadius = "12px"; msg.style.fontSize = "14px"; msg.style.maxWidth = "80%"; msg.style.lineHeight = "1.5";
-      if (isUser) { msg.style.alignSelf = "flex-end"; msg.style.background = "var(--text-main)"; msg.style.color = "var(--bg-dark)"; msg.style.fontWeight = "500"; } 
-      else { msg.style.alignSelf = "flex-start"; msg.style.background = "rgba(255,255,255,0.05)"; msg.style.border = "1px solid var(--glass-border)"; msg.style.color = "var(--text-main)"; }
-      chatBox.appendChild(msg); chatBox.scrollTop = chatBox.scrollHeight;
-      return msg;
+      const msg = document.createElement("div"); msg.innerText = text; msg.style.padding = "10px 14px"; msg.style.borderRadius = "12px"; msg.style.fontSize = "14px"; msg.style.maxWidth = "80%"; msg.style.lineHeight = "1.5";
+      if (isUser) { msg.style.alignSelf = "flex-end"; msg.style.background = "var(--text-main)"; msg.style.color = "var(--bg-dark)"; msg.style.fontWeight = "500"; } else { msg.style.alignSelf = "flex-start"; msg.style.background = "rgba(255,255,255,0.05)"; msg.style.border = "1px solid var(--glass-border)"; msg.style.color = "var(--text-main)"; }
+      document.getElementById("chatBox").appendChild(msg); document.getElementById("chatBox").scrollTop = document.getElementById("chatBox").scrollHeight; return msg;
     }
-
     async function sendData() {
-      const input = document.getElementById("textInput");
-      const text = input.value.trim(); if(!text) return;
-      const selectedWallet = document.getElementById("walletSelect").value;
-      
-      addMessageToUI(text, true); input.value = "";
-      const typing = addMessageToUI("Saving...", false); typing.style.opacity = "0.5";
-      try {
-        const res = await fetch(`${API_URL}/chat`, { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" }, 
-            body: JSON.stringify({ message: text, wallet: selectedWallet, userId: userId }) 
-        });
-        const data = await res.json(); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData();
-      } catch(err) { typing.remove(); const errUI = addMessageToUI("Error jaringan.", false); errUI.style.color = "var(--accent-red)"; }
+      const input = document.getElementById("textInput"); const text = input.value.trim(); if(!text) return;
+      addMessageToUI(text, true); input.value = ""; const typing = addMessageToUI("Saving...", false); typing.style.opacity = "0.5";
+      try { const data = await fetch(`${API_URL}/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text, wallet: document.getElementById("walletSelect").value, userId: userId }) }).then(r=>r.json()); typing.remove(); addMessageToUI(data.message || "Saved", false); loadData(); } catch(err) { typing.remove(); addMessageToUI("Error jaringan.", false).style.color = "var(--accent-red)"; }
     }
-
     async function askAI() {
-      const input = document.getElementById("textInput");
-      const text = input.value.trim(); if(!text) return;
-      
-      addMessageToUI(text, true); input.value = "";
-      const typing = addMessageToUI("AI sedang menganalisa...", false); typing.style.opacity = "0.5";
-      try {
-        const res = await fetch(`${API_URL}/chat-ai`, { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" }, 
-            body: JSON.stringify({ message: text, userId: userId }) 
-        });
-        const data = await res.json(); typing.remove(); addMessageToUI(data.reply, false); loadData();
-      } catch(err) { typing.remove(); const errUI = addMessageToUI("AI Error.", false); errUI.style.color = "var(--accent-red)"; }
+      const input = document.getElementById("textInput"); const text = input.value.trim(); if(!text) return;
+      addMessageToUI(text, true); input.value = ""; const typing = addMessageToUI("AI sedang menganalisa...", false); typing.style.opacity = "0.5";
+      try { const data = await fetch(`${API_URL}/chat-ai`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text, userId: userId }) }).then(r=>r.json()); typing.remove(); addMessageToUI(data.reply, false); loadData(); } catch(err) { typing.remove(); addMessageToUI("AI Error.", false).style.color = "var(--accent-red)"; }
     }
-
-    function quickAdd(text) { document.getElementById("textInput").value = text; sendData(); }
-    function quickAsk(text) { document.getElementById("textInput").value = text; askAI(); }
+    function quickAdd(text) { document.getElementById("textInput").value = text; sendData(); } function quickAsk(text) { document.getElementById("textInput").value = text; askAI(); }
 
     async function bayarMidtrans(tier, price) {
-        const bayarBtn = event.target;
-        const originalText = bayarBtn.innerText;
-        bayarBtn.innerText = "Memuat Sistem...";
-        bayarBtn.disabled = true;
-
+        const bayarBtn = event.target; const originalText = bayarBtn.innerText; bayarBtn.innerText = "Memuat Sistem..."; bayarBtn.disabled = true;
         try {
-            const res = await fetch(`${API_URL}/create-transaction`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId, tierLevel: tier, price: price })
-            });
-            const data = await res.json();
-
-            bayarBtn.innerText = originalText;
-            bayarBtn.disabled = false;
-
-            if (data.token) {
-                window.snap.pay(data.token, {
-                    onSuccess: function(result){
-                        alert("Pembayaran sukses! Silakan login ulang untuk menikmati fitur.");
-                        localStorage.removeItem("rf_user_id");
-                        window.location.href = "login.html";
-                    },
-                    onPending: function(result){ alert("Menunggu konfirmasi pembayaran..."); },
-                    onError: function(result){ alert("Pembayaran gagal atau dibatalkan!"); }
-                });
-            } else {
-                alert("Gagal membuat transaksi: " + data.error);
-            }
-        } catch(e) { 
-            alert("Jaringan error saat menghubungi sistem pembayaran."); 
-            bayarBtn.innerText = originalText;
-            bayarBtn.disabled = false;
-        }
+            const data = await fetch(`${API_URL}/create-transaction`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userId, tierLevel: tier, price: price }) }).then(r=>r.json());
+            bayarBtn.innerText = originalText; bayarBtn.disabled = false;
+            if (data.token) { window.snap.pay(data.token, { onSuccess: function(){ alert("Pembayaran sukses! Silakan login ulang."); localStorage.clear(); window.location.href = "login.html"; }, onPending: function(){ alert("Menunggu konfirmasi..."); }, onError: function(){ alert("Pembayaran gagal!"); } }); } else alert("Gagal transaksi: " + data.error);
+        } catch(e) { alert("Jaringan error."); bayarBtn.innerText = originalText; bayarBtn.disabled = false; }
     }
 
-    window.onload = function() {
-        resetInactivityTimer();
-        updateLocalization();
-        loadData();
-    };
+    window.onload = function() { resetInactivityTimer(); updateLocalization(); loadData(); };
 </script>
 
 </body>
