@@ -1,0 +1,23 @@
+{
+  "name": "RantauFlow Enterprise",
+  "short_name": "RantauFlow",
+  "description": "AI-Powered Personal Finance & Smart Nudges",
+  "start_url": "/login.html",
+  "display": "standalone",
+  "background_color": "#070B14",
+  "theme_color": "#070B14",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/public/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/public/icon-512.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
