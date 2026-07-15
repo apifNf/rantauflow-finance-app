@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 const midtransClient = require("midtrans-client");
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
@@ -9,7 +11,10 @@ const mysql = require("mysql2");
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Mengizinkan akses publik ke folder foto profil & file web
 app.use(express.static(__dirname));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Pengecek Lalu Lintas: Log setiap request yang masuk ke server
 app.use((req, res, next) => {
@@ -33,11 +38,32 @@ const snap = new midtransClient.Snap({
   clientKey: process.env.MIDTRANS_CLIENT_KEY || 'RAHASIA_DI_HOSTINGER'
 });
 
-// ================= FASE 1: BUKA PINTU SERVER =================
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[SUKSES] Server RantauFlow Enterprise hidup di port ${PORT}`);
+// ================= SETUP MULTER (UPLOAD FOTO PROFIL) =================
+const uploadDir = path.join(__dirname, 'public', 'uploads', 'avatars');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true }); // Buat folder otomatis jika belum ada
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        // Format penamaan file: avatar-IDUSER-TIMESTAMP.jpg
+        cb(null, 'avatar-' + req.body.userId + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
 });
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 2 * 1024 * 1024 }, // Batas ukuran maksimal 2MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) cb(null, true);
+        else cb(new Error('Format ditolak! Hanya gambar yang diizinkan.'));
+    }
+});
+
 
 // ================= FASE 2: DATABASE CONNECTION POOLING (MYSQL) =================
 const pool = mysql.createPool({
@@ -57,51 +83,13 @@ pool.getConnection((err, connection) => {
     } else {
         console.log("[SUKSES] Database MySQL Enterprise Terhubung! Siap scale-up.");
         
-// ==========================================
-// 1. WEBHOOK VERIFICATION (GET)
-// ==========================================
-app.get("/webhook/whatsapp", (req, res) => {
-    const mode = req.query["hub.mode"];
-    const token = req.query["hub.verify_token"];
-    const challenge = req.query["hub.challenge"];
-
-    if (mode === "subscribe" && token === "TOKEN_RAHASIA_MU") {
-        console.log("[WEBHOOK] Verifikasi Berhasil!");
-        res.status(200).send(challenge);
-    } else {
-        console.log("[WEBHOOK] Verifikasi Gagal! Token tidak cocok.");
-        res.sendStatus(403);
-    }
-});
-
-// ==========================================
-// 2. RECEIVE INCOMING MESSAGES (POST)
-// ==========================================
-app.post("/webhook/whatsapp", (req, res) => {
-    // 1. Langsung balas 200 OK ke Meta agar mereka tidak memutus koneksi
-    res.sendStatus(200);
-
-    // 2. Log data yang masuk untuk memastikan formatnya
-    console.log("[INCOMING WEBHOOK] Terdeteksi request POST dari Meta!");
-    
-    try {
-        const body = req.body;
-        // Cek apakah ini benar-benar pesan WhatsApp
-        if (body.object === "whatsapp_business_account") {
-            console.log("[PAYLOAD] Data pesan:", JSON.stringify(body, null, 2));
-        } else {
-            console.log("[PAYLOAD] Bukan dari WhatsApp Business Account");
-        }
-    } catch (error) {
-        console.error("[ERROR] Gagal memproses data masuk:", error);
-    }
-});
-
-        // Pembuatan Tabel Dasar
+        // Pembuatan Tabel Dasar dengan Tambahan Kolom Name & Avatar
         const createUsers = `CREATE TABLE IF NOT EXISTS users(
             id INT AUTO_INCREMENT PRIMARY KEY, 
             email VARCHAR(255) UNIQUE, 
             password VARCHAR(255), 
+            name VARCHAR(255) DEFAULT NULL,
+            avatar VARCHAR(255) DEFAULT NULL,
             tier_level TINYINT DEFAULT 0,
             wa_number VARCHAR(20) UNIQUE DEFAULT NULL,
             affiliate_code VARCHAR(50) UNIQUE DEFAULT NULL,
@@ -121,7 +109,7 @@ app.post("/webhook/whatsapp", (req, res) => {
         connection.query(createUsers);
         connection.query(createTransactions);
 
-        // AUTO-MIGRASI: Cek apakah masih pakai format lama (is_pro), jika ya, ubah otomatis!
+        // AUTO-MIGRASI: Cek apakah masih pakai format lama (is_pro) atau butuh kolom name/avatar
         connection.query("SHOW COLUMNS FROM users LIKE 'is_pro'", (err, results) => {
             if (results && results.length > 0) {
                 console.log("[MIGRASI] Mengupgrade tabel users ke versi Enterprise (Tier & Affiliate)...");
@@ -132,16 +120,56 @@ app.post("/webhook/whatsapp", (req, res) => {
             }
         });
 
+        connection.query("SHOW COLUMNS FROM users LIKE 'name'", (err, results) => {
+            if (results && results.length === 0) {
+                console.log("[MIGRASI] Menambahkan kolom Name & Avatar ke tabel users...");
+                connection.query("ALTER TABLE users ADD COLUMN name VARCHAR(255) DEFAULT NULL");
+                connection.query("ALTER TABLE users ADD COLUMN avatar VARCHAR(255) DEFAULT NULL");
+            }
+        });
+
         connection.release();
     }
 });
+
+
+// ================= FASE 3: WEBHOOK WHATSAPP (RUTE UTAMA META) =================
+app.get("/webhook/whatsapp", (req, res) => {
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
+
+    if (mode === "subscribe" && token === "TOKEN_RAHASIA_MU") {
+        console.log("[WEBHOOK] Verifikasi Berhasil!");
+        res.status(200).send(challenge);
+    } else {
+        console.log("[WEBHOOK] Verifikasi Gagal! Token tidak cocok.");
+        res.sendStatus(403);
+    }
+});
+
+app.post("/webhook/whatsapp", (req, res) => {
+    res.sendStatus(200); // Wajib balas 200 OK ke Meta secepatnya
+    console.log("[INCOMING WEBHOOK] Terdeteksi request POST dari Meta!");
+    
+    try {
+        const body = req.body;
+        if (body.object === "whatsapp_business_account") {
+            console.log("[PAYLOAD] Data pesan:", JSON.stringify(body, null, 2));
+        } else {
+            console.log("[PAYLOAD] Bukan dari WhatsApp Business Account");
+        }
+    } catch (error) {
+        console.error("[ERROR] Gagal memproses data masuk:", error);
+    }
+});
+
 
 // ================= KOSAKATA AI SUPER ADVANCED (TRADING DEGEN MODE) =================
 function parseMessage(text) {
   text = (text || "").toLowerCase();
   let amount = 0; let category = "other"; let type = "expense";
   
-  // REGEX BARU: Membaca titik (.) maupun koma (,)
   const match = text.match(/(\$)?(\d+(?:[.,]\d+)?)\s?(k|jt)?\b/i);
   if (match) {
     const isDollar = match[1] === "$"; 
@@ -153,28 +181,20 @@ function parseMessage(text) {
     if (isDollar) amount *= 16300; 
   }
   
-  // DATABASE KATA KUNCI ASET (Crypto, Saham, & Bursa/Exchange)
   const cryptoAssets = ["bitcoin", "btc", "ethereum", "eth", "solana", "sol", "doge", "usdt", "xrp", "pepe", "bnb", "ton"];
   const stockAssets = ["bbca", "bbri", "bmri", "bbni", "goto", "tlkm", "asii", "reksadana", "obligasi", "saham"];
   const exchanges = ["indodax", "mexc", "okx", "bybit", "binance", "cryptoinside"];
   
-  // Cek apakah kalimat mengandung salah satu dari aset/bursa di atas
   const isInvestment = cryptoAssets.some(kw => text.includes(kw)) || 
                        stockAssets.some(kw => text.includes(kw)) || 
                        exchanges.some(kw => text.includes(kw));
   
-  // LOGIKA KATEGORISASI
   if (text.includes("fomo") || text.includes("memecoin") || text.includes("shitcoin") || text.includes("koin micin") || text.includes("sangkut")) { type = "expense"; category = "investment"; }
   else if (text.includes("liquid") || text.includes("mc") || text.includes("margin call") || text.includes("futures") || text.includes("loss") || text.includes("cutloss") || text.includes("rugi") || text.includes("boncos")) { type = "expense"; category = "investment"; }
   else if (text.includes("profit") || text.includes("cuan") || text.includes("tp") || text.includes("take profit") || text.includes("wd") || text.includes("withdraw") || text.includes("dividen")) { type = "income"; category = "investment"; } 
-  // JIKA TERDETEKSI NAMA ASET / EXCHANGE SPESIFIK
   else if (isInvestment || text.includes("crypto") || text.includes("forex") || text.includes("invest") || text.includes("beli koin") || text.includes("depo")) { 
-      // Deteksi aksi: Jual atau Beli
-      if (text.includes("jual") || text.includes("sell") || text.includes("cair")) {
-          type = "income"; // Jual aset = uang masuk ke dompet cash
-      } else {
-          type = "expense"; // Beli / Depo = uang cash keluar (berubah jadi aset)
-      }
+      if (text.includes("jual") || text.includes("sell") || text.includes("cair")) { type = "income"; } 
+      else { type = "expense"; }
       category = "investment"; 
   } 
   else if (text.includes("tabung") || text.includes("nabung") || text.includes("save")) { type = "saving"; category = "saving"; } 
@@ -187,7 +207,7 @@ function parseMessage(text) {
   return { amount, type, category };
 }
 
-// ================= ENDPOINT AUTENTIKASI (UPGRADED TIER SYSTEM) =================
+// ================= ENDPOINT AUTENTIKASI =================
 app.get("/", (req, res) => { res.send("RantauFlow Enterprise API Running Perfectly"); });
 
 app.post("/register", async (req, res) => {
@@ -201,7 +221,7 @@ app.post("/register", async (req, res) => {
         if(err.code === 'ER_DUP_ENTRY') return res.json({ success: false, message: "Email sudah terdaftar" });
         return res.json({ success: false, message: "Gagal buat akun: " + err.message });
       }
-      res.json({ success: true, userId: result.insertId, tierLevel: 0 }); // Menggunakan tierLevel
+      res.json({ success: true, userId: result.insertId, tierLevel: 0 });
     });
   } catch (err) { res.json({ success: false, message: "Server error hash" }); }
 });
@@ -213,7 +233,6 @@ app.post("/login", (req, res) => {
     const user = results[0];
     try {
       const match = await bcrypt.compare(password, user.password);
-      // Auto-fallback jika DB masih pakai is_pro (sebelum migrasi selesai)
       const tLevel = user.tier_level !== undefined ? user.tier_level : (user.is_pro || 0);
       
       if (match) res.json({ success: true, userId: user.id, tierLevel: tLevel });
@@ -252,23 +271,83 @@ app.post("/reset-password", async (req, res) => {
     } catch (error) { res.json({ success: false, message: "Server error reset" }); }
 });
 
+// ================= ENDPOINT MANAJEMEN PROFIL (BARU) =================
+
+// Endpoint untuk mengambil data nama & avatar saat dashboard diload
+app.get("/profile", (req, res) => {
+    const { userId } = req.query;
+    if (!userId) return res.json({ success: false, message: "Unauthorized" });
+
+    pool.query("SELECT id, email, name, avatar, tier_level FROM users WHERE id = ?", [userId], (err, results) => {
+        if (err || results.length === 0) return res.json({ success: false, message: "User tidak ditemukan" });
+        res.json({ success: true, user: results[0] });
+    });
+});
+
+// Endpoint untuk update Profil (Nama, Sandi, & Foto Avatar)
+app.post("/api/user/update-profile", upload.single('avatar'), (req, res) => {
+    const { userId, name, oldPassword, newPassword } = req.body;
+    if (!userId) return res.json({ success: false, message: "Unauthorized" });
+
+    pool.query("SELECT * FROM users WHERE id = ?", [userId], async (err, results) => {
+        if (err || results.length === 0) return res.json({ success: false, message: "User tidak ditemukan" });
+        const user = results[0];
+
+        let queryUpdates = [];
+        let queryParams = [];
+
+        // 1. Update Nama
+        if (name && name !== user.name) {
+            queryUpdates.push("name = ?");
+            queryParams.push(name);
+        }
+
+        // 2. Update File Foto Avatar
+        if (req.file) {
+            const avatarPath = '/public/uploads/avatars/' + req.file.filename;
+            queryUpdates.push("avatar = ?");
+            queryParams.push(avatarPath);
+        }
+
+        // 3. Update Password
+        if (oldPassword && newPassword) {
+            const match = await bcrypt.compare(oldPassword, user.password);
+            if (!match) return res.json({ success: false, message: "Password lama salah!" });
+            const hashedNew = await bcrypt.hash(newPassword, 10);
+            queryUpdates.push("password = ?");
+            queryParams.push(hashedNew);
+        }
+
+        // Jika tidak ada data yang dilempar untuk diubah
+        if (queryUpdates.length === 0) {
+            return res.json({ success: true, message: "Tidak ada perubahan", user: { name: user.name, avatar: user.avatar } });
+        }
+
+        // Jalankan Query Update secara Dinamis
+        const sql = `UPDATE users SET ${queryUpdates.join(', ')} WHERE id = ?`;
+        queryParams.push(userId);
+
+        pool.query(sql, queryParams, (updateErr) => {
+            if (updateErr) return res.json({ success: false, message: "Gagal update database" });
+            
+            // Kembalikan data terbaru ke frontend agar langsung berubah di dashboard
+            pool.query("SELECT id, email, name, avatar, tier_level FROM users WHERE id = ?", [userId], (err2, res2) => {
+                res.json({ success: true, message: "Profil berhasil diperbarui!", user: res2[0] });
+            });
+        });
+    });
+});
+
+
 // ================= ENDPOINT PEMBAYARAN MIDTRANS =================
 app.post('/create-transaction', async (req, res) => {
     const { userId, tierLevel, price } = req.body;
     if (!userId) return res.json({ error: "User belum login" });
 
-    // Membuat nomor antrean unik
     let orderId = `RF-${tierLevel}-${userId}-${Date.now()}`;
-    
     let parameter = {
-        transaction_details: {
-            order_id: orderId,
-            gross_amount: price
-        },
-        customer_details: {
-            first_name: "Member",
-            email: `user${userId}@rantauflow.com`
-        }
+        transaction_details: { order_id: orderId, gross_amount: price },
+        customer_details: { first_name: "Member", email: `user${userId}@rantauflow.com` }
     };
     
     try {
@@ -279,14 +358,12 @@ app.post('/create-transaction', async (req, res) => {
     }
 });
 
-// Webhook untuk mendengarkan jika user sudah transfer
 app.post('/midtrans-notification', async (req, res) => {
     try {
         const statusResponse = await snap.transaction.notification(req.body);
         let orderId = statusResponse.order_id;
         let transactionStatus = statusResponse.transaction_status;
 
-        // Jika pembayaran sukses, upgrade otomatis Tier User di MySQL
         if (transactionStatus === 'capture' || transactionStatus === 'settlement'){
             const parts = orderId.split('-');
             if(parts.length >= 3) {
@@ -312,7 +389,6 @@ app.post("/chat", (req, res) => {
   const text = message.toLowerCase();
   let miniRoast = "";
 
-  // ================= LOGIKA MINI-ROAST AI =================
   if (parsed.category === "investment") {
       if (text.includes("loss") || text.includes("cutloss") || text.includes("liquid") || text.includes("mc") || text.includes("rugi") || text.includes("fomo") || text.includes("memecoin") || text.includes("sangkut")) {
           miniRoast = "Jangan sering-sering kaya gini bro. Trading itu butuh analisa, trade boleh fomo jangan. Jaga psikologis dan manajemen risikomu!";
@@ -327,7 +403,6 @@ app.post("/chat", (req, res) => {
       miniRoast = "Mantap! Nabung adalah jalan ninja menuju kebebasan finansial. Lanjutkan habit ini.";
   }
 
-  // Gabungkan pesan pencatatan dengan AI Mini-Roast (jika ada)
   const finalMessage = miniRoast 
       ? `Tercatat pos *${parsed.category}* sebesar Rp${parsed.amount.toLocaleString("id-ID")} memakai Dompet [${dompetDipakai}].\n\n🤖 AI: ${miniRoast}`
       : `Tercatat pos *${parsed.category}* sebesar Rp${parsed.amount.toLocaleString("id-ID")} memakai Dompet [${dompetDipakai}].`;
@@ -363,22 +438,15 @@ app.post("/chat-ai", (req, res) => {
     const text = message.toLowerCase();
     const balance = income - expense;
 
-    // 1. ROASTING: FOMO / MEMECOIN
     if (text.includes("fomo") || text.includes("meme") || text.includes("shitcoin") || text.includes("micin")) {
         return res.json({ reply: `🔥 ROASTING: Beli memecoin karena FOMO masuk grup Telegram? Lu pikir lu siapa, bandar besar? Lu cuma jadi *exit liquidity* (tumbal) buat para Paus yang udah serok dari bawah! \n\n💡 SOLUSI: Hapus aplikasi exchange lu sekarang. Peluang lu menang main beginian lebih kecil dari kasino. Kalau lu emang mau investasi, mulai belajar fundamental, teknikal (Price Action), atau masukin duit lu ke ETF/Reksadana yang dikelola orang pinter!` });
     }
-
-    // 2. ROASTING: FUTURES / MARGIN CALL / LIQUID / SAHAM GORENGAN
     if (text.includes("liquid") || text.includes("mc") || text.includes("margin") || text.includes("futures") || text.includes("gorengan")) {
         return res.json({ reply: `🔥 ROASTING: Kena likuidasi lagi? Pake leverage x100 ngerasa jadi pro trader padahal analisa lu cuma modal 'feeling' sama ludah influencer YouTube? \n\n💡 SOLUSI: Stop trading futures/margin! Mental dan *risk management* lu masih selevel anak TK. Main Spot aja dulu, cutloss dengan disiplin, dan pantau kalender ekonomi sebelum buka posisi.` });
     }
-
-    // 3. ROASTING: REVENGE TRADING (HABITUAL LOSER) - Jika Loss >= 3 kali
     if ((text.includes("rugi") || text.includes("loss") || text.includes("cutloss") || text.includes("boncos")) && tradingLossCount >= 3) {
         return res.json({ reply: `🔥 ULTIMATE ROAST: Gue liat data lu, lu udah LOSS TRADING ${tradingLossCount} kali berturut-turut! Total duit lu yang dimakan market: Rp ${totalTradingLoss.toLocaleString("id-ID")}! \nLu bukan investasi bro, lu lagi donasi paksa ke market! Lu kena sindrom *Revenge Trading* (Balas dendam pengen balik modal instan). \n\n💡 SOLUSI DARURAT: STOP TRADING 1 MINGGU FULL. Market nggak akan ke mana-mana, tapi duit lu bisa habis ke 0. Puasa buka chart, evaluasi jurnal lu, dan sadar diri emosi lu lagi hancur lebur.` });
     }
-
-    // 4. ROASTING: UMUM
     if (text.includes("roast")) {
         if (tradingLossCount > 0) return res.json({ reply: `🔥 ROASTING: Gaya lu elit, portofolio lu sulit! Dompet lu isinya cuma harapan kosong nungguin koin naik 1000% biar bisa pamer. \n\n💡 EVALUASI: Kurangi halu, bangun *cashflow* dari skill dunia nyata lu dulu.`});
         if (balance < 0) return res.json({ reply: `💀 ROASTING: Lu nombok hidup bro. Pengeluaran lu lebih gede dari pemasukan. \n\n💡 SOLUSI: Pangkas lifestyle nongkrong lu, lu bukan sultan.` });
@@ -399,7 +467,7 @@ app.get('/summary', (req, res) => {
     
     let income = 0; let expense = 0;
     rows.forEach(tx => { 
-        tx.amount = Number(tx.amount); // Normalisasi angka MySQL
+        tx.amount = Number(tx.amount); 
         if (tx.type === "income") income += tx.amount; 
         if (tx.type === "expense") expense += tx.amount; 
     });
@@ -430,4 +498,10 @@ app.get("/insight", (req, res) => {
     const expense = Number(row.expense) || 0;
     res.json({ income, expense, balance: (income - expense), insight: ["✅ Stabil"] });
   });
+});
+
+// ================= FASE 1: BUKA PINTU SERVER =================
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SUKSES] Server RantauFlow Enterprise hidup tenang di port ${PORT}`);
 });
