@@ -183,43 +183,49 @@
 
     <!-- SCRIPT PWA & TOMBOL INSTALL -->
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('Service Worker terdaftar!'))
-            .catch(err => console.log('Service Worker gagal terdaftar:', err));
-        });
-      }
-
-      // Logika Penangkapan Pop-up Install
-      let deferredPrompt;
-      const installAppBtn = document.getElementById('installAppBtn');
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        // Mencegah pop-up default bawaan Chrome muncul
-        e.preventDefault();
-        // Simpan event-nya agar bisa dipicu nanti
-        deferredPrompt = e;
-        // Munculkan tombol Install buatan kita
-        if (installAppBtn) {
-            installAppBtn.style.display = 'block';
+        // 1. Registrasi Service Worker (Wajib ada)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker terdaftar!'))
+                    .catch(err => console.log('Service Worker gagal terdaftar:', err));
+            });
         }
-      });
 
-      if (installAppBtn) {
-          installAppBtn.addEventListener('click', async () => {
-            if (deferredPrompt !== null) {
-                // Picu pop-up instalasi bawaan sistem
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User sukses menginstal RantauFlow');
-                    installAppBtn.style.display = 'none'; // Sembunyikan tombol setelah diinstal
+        // 2. Logika "Force Show" Tombol Install PWA
+        const installAppBtn = document.getElementById('installAppBtn');
+        
+        // Memaksa tombol agar selalu muncul di semua perangkat
+        if (installAppBtn) {
+            installAppBtn.style.display = 'block'; 
+        }
+
+        let deferredPrompt;
+
+        // Menangkap event install jika browser mendukung (Chrome Android/Desktop)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        // Aksi saat tombol Install diklik
+        if (installAppBtn) {
+            installAppBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Jika mendukung popup otomatis, tampilkan popup bawaan
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('User sukses menginstal RantauFlow');
+                        installAppBtn.style.display = 'none'; // Sembunyikan setelah instal
+                    }
+                    deferredPrompt = null;
+                } else {
+                    // Jika browser memblokir popup (iOS/Safari/Opera), tampilkan alert instruksi
+                    alert("Untuk menginstall aplikasi RantauFlow:\n\n1. Klik ikon 'Share' (atau menu titik tiga) di browser kamu.\n2. Pilih 'Add to Home Screen' (Tambah ke Layar Utama) atau 'Install App'.");
                 }
-                deferredPrompt = null;
-            }
-          });
-      }
+            });
+        }
     </script>
 </body>
 </html>

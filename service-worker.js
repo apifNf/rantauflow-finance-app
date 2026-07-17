@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rantauflow-cache-v1';
+const CACHE_NAME = 'rantauflow-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
