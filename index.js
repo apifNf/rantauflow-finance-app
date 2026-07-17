@@ -318,6 +318,14 @@ app.get('/api/market/:type', async (req, res) => {
     try {
         let result = [];
         
+        // [TWEAK KEAMANAN] Topeng User-Agent agar Yahoo Finance tidak memblokir server kita
+        const fetchOptions = {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        };
+        
         if (type === 'crypto') {
             const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr&order=market_cap_desc&per_page=10&page=1&sparkline=false');
             const data = await response.json();
@@ -325,16 +333,36 @@ app.get('/api/market/:type', async (req, res) => {
         } 
         else if (type === 'saham') {
             const symbols = 'BBCA.JK,BBRI.JK,BMRI.JK,BBNI.JK,TLKM.JK,ASII.JK,GOTO.JK,AMMN.JK,BREN.JK,BYAN.JK';
-            const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
+            const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`, fetchOptions);
             const data = await response.json();
-            result = data.quoteResponse.result.map(s => ({ name: s.shortName || s.longName, symbol: s.symbol.replace('.JK', ''), price: s.regularMarketPrice, change: s.regularMarketChangePercent }));
+            
+            if(!data.quoteResponse || !data.quoteResponse.result) throw new Error("Diblokir Yahoo");
+            
+            result = data.quoteResponse.result.map(s => ({ 
+                name: s.shortName || s.longName || s.symbol, 
+                symbol: s.symbol.replace('.JK', ''), 
+                price: s.regularMarketPrice, 
+                change: s.regularMarketChangePercent 
+            }));
         }
         else if (type === 'emas') {
-            // Menggunakan Token Emas Global (PAXG) sbg proxy akurat, lalu konversi per gram ke Rupiah
-            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=idr&include_24hr_change=true');
+            // Menarik 3 data sekaligus: Emas (GC=F), Perak (SI=F), dan Kurs USD-IDR (IDR=X)
+            const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=GC=F,SI=F,IDR=X`, fetchOptions);
             const data = await response.json();
-            const gramPrice = data['pax-gold'].idr / 31.1035; // 1 Troy Oz = 31.1035 Gram
-            result = [{ name: 'Emas Global (Antam Proxy)', symbol: 'XAU/IDR', price: gramPrice, change: data['pax-gold'].idr_24h_change }];
+            const quotes = data.quoteResponse.result;
+            
+            const gold = quotes.find(q => q.symbol === 'GC=F');
+            const silver = quotes.find(q => q.symbol === 'SI=F');
+            const usdIdr = quotes.find(q => q.symbol === 'IDR=X').regularMarketPrice;
+
+            // Rumus Akurat: (Harga USD per Troy Ounce * Kurs Rupiah) / 31.1035 Gram
+            const gramPriceGold = (gold.regularMarketPrice * usdIdr) / 31.1035;
+            const gramPriceSilver = (silver.regularMarketPrice * usdIdr) / 31.1035;
+
+            result = [
+                { name: 'Emas Global (Per Gram)', symbol: 'XAU/IDR', price: gramPriceGold, change: gold.regularMarketChangePercent },
+                { name: 'Perak / Silver (Per Gram)', symbol: 'XAG/IDR', price: gramPriceSilver, change: silver.regularMarketChangePercent }
+            ];
         }
         else if (type === 'kurs') {
             const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
