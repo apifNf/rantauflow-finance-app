@@ -63,6 +63,19 @@
 
     .chip { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s ease; }
 
+    /* CSS KHUSUS MARKET TRACKER */
+    .market-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px; }
+    .market-tab { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); transition: all 0.2s; white-space: nowrap; }
+    .market-tab.active { background: var(--accent-blue); color: var(--bg-dark); border-color: var(--accent-blue); }
+    .market-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .market-table th { text-align: left; padding: 10px 8px; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .market-table td { padding: 14px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-main); }
+    .market-table tr:last-child td { border-bottom: none; }
+    .trend-up { color: var(--accent-green); background: rgba(52, 211, 153, 0.1); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+    .trend-down { color: var(--accent-red); background: rgba(248, 113, 113, 0.1); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+    .asset-name { font-weight: 600; display: block; }
+    .asset-symbol { font-size: 11px; color: var(--text-muted); }
+
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-content { max-width: 600px; width: 90%; text-align: center; transform: translateY(20px); transition: transform 0.3s ease; }
@@ -96,7 +109,7 @@
     .lang-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 6px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
     .lang-btn.active { background: var(--text-main); color: var(--bg-dark); }
 
-    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
 
@@ -246,6 +259,42 @@
       </div>
     </div>
 
+    <!-- UI BARU: MARKET TRACKER -->
+    <div class="glass-card" style="margin-bottom: 24px;" data-html2canvas-ignore>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin: 0;" data-i18n="market_tracker">📊 Pantauan Pasar Live</h3>
+        <span style="font-size:11px; color:var(--text-muted); font-weight:600;"><span style="color:var(--accent-green); animation: pulse 2s infinite;">●</span> REAL-TIME</span>
+      </div>
+      
+      <div class="market-tabs">
+        <div class="market-tab active" onclick="switchMarketTab('crypto', this)">🪙 Crypto (Top 10)</div>
+        <div class="market-tab" onclick="switchMarketTab('saham', this)">📈 Saham Lokal</div>
+        <div class="market-tab" onclick="switchMarketTab('emas', this)">🥇 Harga Emas</div>
+        <div class="market-tab" onclick="switchMarketTab('kurs', this)">💱 Kurs Mata Uang</div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="market-table" id="marketTable">
+          <thead>
+            <tr>
+              <th data-i18n="market_asset">Aset / Instrumen</th>
+              <th style="text-align: right;" data-i18n="market_price">Harga Saat Ini</th>
+              <th style="text-align: right;" data-i18n="market_change">24j (%)</th>
+            </tr>
+          </thead>
+          <tbody id="marketBody">
+            <tr>
+              <td colspan="3" style="text-align:center; padding: 30px; color:var(--text-muted);">
+                <div style="font-size: 24px; margin-bottom: 10px;">⏳</div>
+                Menyiapkan Jalur API Market...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- END: MARKET TRACKER -->
+
     <div class="flex-row" style="align-items: center; justify-content: space-between; margin-top: 10px;" data-html2canvas-ignore>
       <h3 style="margin: 0; padding-left:16px;" data-i18n="financial_report">Laporan Finansial</h3>
       <div class="action-buttons" style="display: flex; gap: 12px; padding: 0 16px;">
@@ -379,8 +428,8 @@
     window.onmousemove = window.onmousedown = window.onkeypress = window.onclick = window.ontouchstart = resetInactivityTimer;
 
     const langDictionary = {
-        id: { total_balance: "Total Saldo (Semua Dompet)", income: "Pemasukan", expense: "Pengeluaran", spending_coach: "✨ Asisten Keuangan AI", health_score: "Skor Kesehatan", add_tx_ask_ai: "Tambah Transaksi / Tanya AI", wallet_utama: "👛 Dompet Utama (Tunai)", add_wallet_pro: "🔒 + Tambah Dompet/Rekening (PRO)", send_btn: "Kirim", ask_ai_btn: "Tanya AI", input_placeholder: "contoh: fomo memecoin 500k atau roast gue", quick_eat: "+ Makan 20k", quick_grab: "+ Grab 30k", quick_check: "Cek Duit Gue", quick_roast: "🔥 Roast Cashflow", top_category: "Kategori Teratas", new_category_pro: "🔒 Kategori Baru", recent_activity: "Aktivitas Terakhir", financial_report: "Laporan Finansial", export_csv: "📊 Ekspor CSV", download_pdf: "📄 Unduh e-Statement", expense_distribution: "Distribusi Pengeluaran", edit_profile_title: "Pengaturan Profil", change_photo: "Pilih Foto", photo_hint: "Format JPG/PNG maks. 2MB", profile_name: "Nama Lengkap", profile_wa: "Nomor WhatsApp (PRO BIZ)", wa_hint: "✅ AI Smart Nudges Aktif", security_settings: "Keamanan & Password", old_password_placeholder: "Password Lama", new_password_placeholder: "Password Baru", cancel: "Batal", save_changes: "Simpan Perubahan", profile_menu: "⚙️ Pengaturan Profil", logout_menu: "🚪 Keluar Akun", free_badge: "GRATIS", pro_badge: "PRO", probiz_badge: "PRO BIZ", sisa_kuota: "⚠️ Sisa kuota catatan gratis bulan ini: ", transaksi: " transaksi.", upgrade_pro: "Upgrade Pro (Mulai Rp 9.900)", notif_logout: "Sesi Anda telah berakhir demi keamanan karena tidak ada aktivitas selama 5 menit.", no_tx: "Belum ada transaksi 💸", saving_rate_prefix: "Rasio Tabungan ", new_account: "Akun Baru", growing: "Bertumbuh", stable: "Stabil", burn_mode: "Boros", health_sehat: "Sehat. Dompet aman.", health_stabil: "Lumayan stabil.", health_warning: "Peringatan. Cek pengeluaran.", health_kritis: "Kritis. Kurangi nongkrong." },
-        en: { total_balance: "Total Balance (All Wallets)", income: "Income", expense: "Expense", spending_coach: "✨ AI Spending Coach", health_score: "Health Score", add_tx_ask_ai: "Add Transaction / Ask AI", wallet_utama: "👛 Main Wallet (Cash)", add_wallet_pro: "🔒 + Add Wallet/Account (PRO)", send_btn: "Send", ask_ai_btn: "Ask AI", input_placeholder: "e.g., fomo memecoin 500k or roast me", quick_eat: "+ Food 20k", quick_grab: "+ Grab 30k", quick_check: "Check My Money", quick_roast: "🔥 Roast Cashflow", top_category: "Top Category", new_category_pro: "🔒 New Category", recent_activity: "Recent Activity", financial_report: "Financial Report", export_csv: "📊 Export CSV", download_pdf: "📄 Download e-Statement", expense_distribution: "Expense Distribution", edit_profile_title: "Profile Settings", change_photo: "Choose Photo", photo_hint: "JPG/PNG format max. 2MB", profile_name: "Full Name", profile_wa: "WhatsApp Number (PRO BIZ)", wa_hint: "✅ AI Smart Nudges Active", security_settings: "Security & Password", old_password_placeholder: "Old Password", new_password_placeholder: "New Password", cancel: "Cancel", save_changes: "Save Changes", profile_menu: "⚙️ Profile Settings", logout_menu: "🚪 Log Out", free_badge: "FREE", pro_badge: "PRO", probiz_badge: "PRO BIZ", sisa_kuota: "⚠️ Free transaction quota remaining this month: ", transaksi: " transactions.", upgrade_pro: "Upgrade Pro (Starts Rp 9,900)", notif_logout: "Your session has ended for security due to inactivity for 5 minutes.", no_tx: "No transactions yet 💸", saving_rate_prefix: "Saving Rate ", new_account: "New Account", growing: "Growing", stable: "Stable", burn_mode: "Burn Mode", health_sehat: "Healthy. Wallet is safe.", health_stabil: "Quite stable.", health_warning: "Warning. Check expenses.", health_kritis: "Critical. Spend less." }
+        id: { total_balance: "Total Saldo (Semua Dompet)", income: "Pemasukan", expense: "Pengeluaran", spending_coach: "✨ Asisten Keuangan AI", health_score: "Skor Kesehatan", add_tx_ask_ai: "Tambah Transaksi / Tanya AI", wallet_utama: "👛 Dompet Utama (Tunai)", add_wallet_pro: "🔒 + Tambah Dompet/Rekening (PRO)", send_btn: "Kirim", ask_ai_btn: "Tanya AI", input_placeholder: "contoh: fomo memecoin 500k atau roast gue", quick_eat: "+ Makan 20k", quick_grab: "+ Grab 30k", quick_check: "Cek Duit Gue", quick_roast: "🔥 Roast Cashflow", top_category: "Kategori Teratas", new_category_pro: "🔒 Kategori Baru", recent_activity: "Aktivitas Terakhir", financial_report: "Laporan Finansial", export_csv: "📊 Ekspor CSV", download_pdf: "📄 Unduh e-Statement", expense_distribution: "Distribusi Pengeluaran", edit_profile_title: "Pengaturan Profil", change_photo: "Pilih Foto", photo_hint: "Format JPG/PNG maks. 2MB", profile_name: "Nama Lengkap", profile_wa: "Nomor WhatsApp (PRO BIZ)", wa_hint: "✅ AI Smart Nudges Aktif", security_settings: "Keamanan & Password", old_password_placeholder: "Password Lama", new_password_placeholder: "Password Baru", cancel: "Batal", save_changes: "Simpan Perubahan", profile_menu: "⚙️ Pengaturan Profil", logout_menu: "🚪 Keluar Akun", free_badge: "GRATIS", pro_badge: "PRO", probiz_badge: "PRO BIZ", sisa_kuota: "⚠️ Sisa kuota catatan gratis bulan ini: ", transaksi: " transaksi.", upgrade_pro: "Upgrade Pro (Mulai Rp 9.900)", notif_logout: "Sesi Anda telah berakhir demi keamanan karena tidak ada aktivitas selama 5 menit.", no_tx: "Belum ada transaksi 💸", saving_rate_prefix: "Rasio Tabungan ", new_account: "Akun Baru", growing: "Bertumbuh", stable: "Stabil", burn_mode: "Boros", health_sehat: "Sehat. Dompet aman.", health_stabil: "Lumayan stabil.", health_warning: "Peringatan. Cek pengeluaran.", health_kritis: "Kritis. Kurangi nongkrong.", market_tracker: "📊 Pantauan Pasar Live", market_asset: "Aset / Instrumen", market_price: "Harga Saat Ini", market_change: "24j (%)" },
+        en: { total_balance: "Total Balance (All Wallets)", income: "Income", expense: "Expense", spending_coach: "✨ AI Spending Coach", health_score: "Health Score", add_tx_ask_ai: "Add Transaction / Ask AI", wallet_utama: "👛 Main Wallet (Cash)", add_wallet_pro: "🔒 + Add Wallet/Account (PRO)", send_btn: "Send", ask_ai_btn: "Ask AI", input_placeholder: "e.g., fomo memecoin 500k or roast me", quick_eat: "+ Food 20k", quick_grab: "+ Grab 30k", quick_check: "Check My Money", quick_roast: "🔥 Roast Cashflow", top_category: "Top Category", new_category_pro: "🔒 New Category", recent_activity: "Recent Activity", financial_report: "Financial Report", export_csv: "📊 Export CSV", download_pdf: "📄 Download e-Statement", expense_distribution: "Expense Distribution", edit_profile_title: "Profile Settings", change_photo: "Choose Photo", photo_hint: "JPG/PNG format max. 2MB", profile_name: "Full Name", profile_wa: "WhatsApp Number (PRO BIZ)", wa_hint: "✅ AI Smart Nudges Active", security_settings: "Security & Password", old_password_placeholder: "Old Password", new_password_placeholder: "New Password", cancel: "Cancel", save_changes: "Save Changes", profile_menu: "⚙️ Profile Settings", logout_menu: "🚪 Log Out", free_badge: "FREE", pro_badge: "PRO", probiz_badge: "PRO BIZ", sisa_kuota: "⚠️ Free transaction quota remaining this month: ", transaksi: " transactions.", upgrade_pro: "Upgrade Pro (Starts Rp 9,900)", notif_logout: "Your session has ended for security due to inactivity for 5 minutes.", no_tx: "No transactions yet 💸", saving_rate_prefix: "Saving Rate ", new_account: "New Account", growing: "Growing", stable: "Stable", burn_mode: "Burn Mode", health_sehat: "Healthy. Wallet is safe.", health_stabil: "Quite stable.", health_warning: "Warning. Check expenses.", health_kritis: "Critical. Spend less.", market_tracker: "📊 Live Market Tracker", market_asset: "Asset / Instrument", market_price: "Current Price", market_change: "24h (%)" }
     };
 
     function updateLocalization() {
@@ -452,7 +501,7 @@
         // FASE 4: Render UI Afiliasi
         const affCode = localStorage.getItem('rf_aff_code') || '';
         const affBal = parseInt(localStorage.getItem('rf_aff_balance')) || 0;
-        const hostUrl = window.location.origin; // Mengambil domain (misal: https://rantauflow.app)
+        const hostUrl = window.location.origin;
         
         document.getElementById("affBalance").innerText = "Rp " + new Intl.NumberFormat("id-ID").format(affBal);
         if (affCode) document.getElementById("refLinkInput").value = `${hostUrl}/login.html?ref=${affCode}`;
@@ -607,7 +656,51 @@
         } catch(e) { alert("Jaringan error."); bayarBtn.innerText = originalText; bayarBtn.disabled = false; }
     }
 
-    window.onload = function() { resetInactivityTimer(); updateLocalization(); loadData(); };
+    /* FUNGSI BARU: SWITCH MARKET TAB (Fetch Data Server) */
+    async function switchMarketTab(tabName, element) {
+        document.querySelectorAll('.market-tab').forEach(t => t.classList.remove('active'));
+        if (element) element.classList.add('active');
+        
+        const marketBody = document.getElementById('marketBody');
+        const lang = localStorage.getItem('rantauflow_lang') || 'id';
+        const loadingText = lang === 'id' ? `Menarik data ${tabName.toUpperCase()} live... 🚀` : `Fetching ${tabName.toUpperCase()} data... 🚀`;
+        
+        marketBody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 30px; color:var(--text-muted);"><div style="font-size: 24px; margin-bottom: 10px;">⏳</div>${loadingText}</td></tr>`;
+        
+        try {
+            const res = await fetch(`${API_URL}/api/market/${tabName}`);
+            const json = await res.json();
+            
+            if (json.success && json.data.length > 0) {
+                marketBody.innerHTML = json.data.map(item => {
+                    const changeVal = item.change || 0;
+                    const isUp = changeVal >= 0;
+                    const changeClass = isUp ? 'trend-up' : 'trend-down';
+                    const changeText = isUp ? `+${changeVal.toFixed(2)}%` : `${changeVal.toFixed(2)}%`;
+                    
+                    // Format harga khusus untuk menyingkat angka jika kepanjangan (saham/kurs)
+                    let priceFmt = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price);
+                    
+                    return `
+                    <tr>
+                        <td>
+                            <span class="asset-name">${item.name}</span>
+                            <span class="asset-symbol">${item.symbol}</span>
+                        </td>
+                        <td style="text-align: right; font-weight: 500;">${priceFmt}</td>
+                        <td style="text-align: right;"><span class="${changeClass}">${changeText}</span></td>
+                    </tr>
+                    `;
+                }).join('');
+            } else {
+                marketBody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 20px; color:var(--accent-red);">Gagal memuat data pasar.</td></tr>`;
+            }
+        } catch (err) {
+            marketBody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 20px; color:var(--accent-red);">Koneksi server API terputus.</td></tr>`;
+        }
+    }
+
+    window.onload = function() { resetInactivityTimer(); updateLocalization(); loadData(); switchMarketTab('crypto'); };
 </script>
 
     <!-- SCRIPT PWA / SERVICE WORKER -->

@@ -152,12 +152,11 @@ function parseMessage(text) {
 app.get("/", (req, res) => { res.send("RantauFlow Enterprise API Running Perfectly"); });
 
 app.post("/register", async (req, res) => {
-  const { email, password, referredBy } = req.body; // MENERIMA KODE REFERRAL
+  const { email, password, referredBy } = req.body;
   if (!email || !password) return res.json({ success: false, message: "Data tidak lengkap" });
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Masukkan data referredBy ke tabel
     pool.query("INSERT INTO users(email, password, tier_level, referred_by) VALUES(?, ?, 0, ?)", [email, hashedPassword, referredBy || null], (err, result) => {
       if (err) {
         if(err.code === 'ER_DUP_ENTRY') return res.json({ success: false, message: "Email sudah terdaftar" });
@@ -189,7 +188,6 @@ app.get("/profile", (req, res) => {
         if (err || results.length === 0) return res.json({ success: false, message: "User tidak ditemukan" });
         let user = results[0];
         
-        // FASE 4: Auto-Generate Affiliate Code jika belum punya
         if (!user.affiliate_code) {
             const newCode = 'RF' + user.id + Math.random().toString(36).substring(2, 6).toUpperCase();
             pool.query("UPDATE users SET affiliate_code = ? WHERE id = ?", [newCode, userId]);
@@ -255,16 +253,13 @@ app.post('/midtrans-notification', async (req, res) => {
                 const uId = parseInt(parts[2]);
                 const grossAmount = parseInt(statusResponse.gross_amount);
 
-                // 1. Upgrade Tier User Pembayar
                 pool.query("UPDATE users SET tier_level = ? WHERE id = ?", [tier, uId]);
 
-                // 2. CEK AFILIASI: Jika pembayar punya "referred_by", kasi 30% ke pengundang
                 pool.query("SELECT referred_by FROM users WHERE id = ?", [uId], (err, users) => {
                     if (users && users.length > 0 && users[0].referred_by) {
                         const refCode = users[0].referred_by;
-                        const komisi = Math.floor(grossAmount * 0.30); // Hitung 30%
+                        const komisi = Math.floor(grossAmount * 0.30);
                         pool.query("UPDATE users SET affiliate_balance = affiliate_balance + ? WHERE affiliate_code = ?", [komisi, refCode]);
-                        console.log(`[AFILIASI] Sukses kirim komisi Rp${komisi} ke pemilik kode ${refCode}`);
                     }
                 });
             }
@@ -301,6 +296,70 @@ app.get("/insight", (req, res) => {
     if(err || results.length === 0) return res.json({ income: 0, expense: 0, balance: 0, insight: ["✅ Stabil"] });
     res.json({ income: Number(results[0].income) || 0, expense: Number(results[0].expense) || 0, balance: (Number(results[0].income) - Number(results[0].expense)), insight: ["✅ Stabil"] });
   });
+});
+
+// ================= FASE 5: MARKET TRACKER REALTIME (CORS BYPASS & CACHE) =================
+const marketCache = {
+    crypto: { data: null, lastFetch: 0 },
+    saham: { data: null, lastFetch: 0 },
+    emas: { data: null, lastFetch: 0 },
+    kurs: { data: null, lastFetch: 0 }
+};
+const CACHE_DURATION = 5 * 60 * 1000; // Cache 5 menit biar server tidak jebol limit API
+
+app.get('/api/market/:type', async (req, res) => {
+    const { type } = req.params;
+    const now = Date.now();
+
+    if (marketCache[type] && marketCache[type].data && (now - marketCache[type].lastFetch < CACHE_DURATION)) {
+        return res.json({ success: true, data: marketCache[type].data, cached: true });
+    }
+
+    try {
+        let result = [];
+        
+        if (type === 'crypto') {
+            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr&order=market_cap_desc&per_page=10&page=1&sparkline=false');
+            const data = await response.json();
+            result = data.map(c => ({ name: c.name, symbol: c.symbol.toUpperCase(), price: c.current_price, change: c.price_change_percentage_24h }));
+        } 
+        else if (type === 'saham') {
+            const symbols = 'BBCA.JK,BBRI.JK,BMRI.JK,BBNI.JK,TLKM.JK,ASII.JK,GOTO.JK,AMMN.JK,BREN.JK,BYAN.JK';
+            const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
+            const data = await response.json();
+            result = data.quoteResponse.result.map(s => ({ name: s.shortName || s.longName, symbol: s.symbol.replace('.JK', ''), price: s.regularMarketPrice, change: s.regularMarketChangePercent }));
+        }
+        else if (type === 'emas') {
+            // Menggunakan Token Emas Global (PAXG) sbg proxy akurat, lalu konversi per gram ke Rupiah
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=idr&include_24hr_change=true');
+            const data = await response.json();
+            const gramPrice = data['pax-gold'].idr / 31.1035; // 1 Troy Oz = 31.1035 Gram
+            result = [{ name: 'Emas Global (Antam Proxy)', symbol: 'XAU/IDR', price: gramPrice, change: data['pax-gold'].idr_24h_change }];
+        }
+        else if (type === 'kurs') {
+            const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+            const data = await response.json();
+            const idrRate = data.rates.IDR;
+            const targets = ['USD', 'EUR', 'GBP', 'JPY', 'SGD', 'AUD', 'MYR', 'CNY', 'SAR', 'HKD'];
+            result = targets.map(cur => {
+                const price = idrRate / data.rates[cur];
+                return { name: `IDR vs ${cur}`, symbol: `${cur}/IDR`, price: price, change: 0 }; 
+            });
+        }
+
+        if (result.length > 0) {
+            marketCache[type] = { data: result, lastFetch: now };
+            return res.json({ success: true, data: result, cached: false });
+        } else {
+            return res.status(500).json({ success: false, message: "Data kosong" });
+        }
+    } catch (error) {
+        console.error(`[MARKET API ERROR - ${type}]`, error.message);
+        if (marketCache[type] && marketCache[type].data) {
+            return res.json({ success: true, data: marketCache[type].data, cached: true, fallback: true });
+        }
+        res.status(500).json({ success: false, message: "Gagal mengambil data pasar" });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
