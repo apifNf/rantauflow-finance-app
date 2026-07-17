@@ -1,10 +1,10 @@
-const CACHE_NAME = 'rantauflow-cache-v2';
+const CACHE_NAME = 'rantauflow-cache-v3';
 const urlsToCache = [
   '/',
   '/index.html',
   '/login.html',
   '/manifest.json',
-  '/public/icon-512.png'
+  '/public/icon-512.png?v=2'
 ];
 
 // Saat aplikasi pertama kali diinstal
