@@ -298,7 +298,7 @@ app.get("/insight", (req, res) => {
   });
 });
 
-// ================= FASE 5: MARKET TRACKER REALTIME (CORS BYPASS & CACHE) =================
+/// ================= FASE 5: MARKET TRACKER REALTIME (CORS BYPASS & CACHE) =================
 const marketCache = {
     crypto: { data: null, lastFetch: 0 },
     saham: { data: null, lastFetch: 0 },
@@ -311,17 +311,16 @@ app.get('/api/market/:type', async (req, res) => {
     const { type } = req.params;
     const now = Date.now();
 
+    // Jika data masih ada di cache (belum 5 menit), kirim dari cache
     if (marketCache[type] && marketCache[type].data && (now - marketCache[type].lastFetch < CACHE_DURATION)) {
         return res.json({ success: true, data: marketCache[type].data, cached: true });
     }
 
     try {
         let result = [];
-        
-        // [TWEAK KEAMANAN] Topeng User-Agent agar Yahoo Finance tidak memblokir server kita
         const fetchOptions = {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
                 'Accept': 'application/json'
             }
         };
@@ -332,36 +331,45 @@ app.get('/api/market/:type', async (req, res) => {
             result = data.map(c => ({ name: c.name, symbol: c.symbol.toUpperCase(), price: c.current_price, change: c.price_change_percentage_24h }));
         } 
         else if (type === 'saham') {
-            const symbols = 'BBCA.JK,BBRI.JK,BMRI.JK,BBNI.JK,TLKM.JK,ASII.JK,GOTO.JK,AMMN.JK,BREN.JK,BYAN.JK';
-            const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`, fetchOptions);
-            const data = await response.json();
+            // [BYPASS TINGKAT DEWA] Pindah dari v7/quote ke v8/chart yang tidak di-lock Yahoo
+            const symbols = ['BBCA.JK','BBRI.JK','BMRI.JK','BBNI.JK','TLKM.JK','ASII.JK','GOTO.JK','AMMN.JK','BREN.JK','BYAN.JK'];
             
-            if(!data.quoteResponse || !data.quoteResponse.result) throw new Error("Diblokir Yahoo");
+            const fetchPromises = symbols.map(async (sym) => {
+                try {
+                    const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}?range=1d&interval=1d`, fetchOptions);
+                    if (!response.ok) return null;
+                    const data = await response.json();
+                    const meta = data.chart.result[0].meta;
+                    
+                    const price = meta.regularMarketPrice;
+                    const prev = meta.chartPreviousClose;
+                    const change = ((price - prev) / prev) * 100;
+                    
+                    return {
+                        name: meta.shortName || sym.replace('.JK', ''),
+                        symbol: sym.replace('.JK', ''),
+                        price: price,
+                        change: change
+                    };
+                } catch (e) { return null; }
+            });
             
-            result = data.quoteResponse.result.map(s => ({ 
-                name: s.shortName || s.longName || s.symbol, 
-                symbol: s.symbol.replace('.JK', ''), 
-                price: s.regularMarketPrice, 
-                change: s.regularMarketChangePercent 
-            }));
+            const rawResult = await Promise.all(fetchPromises);
+            result = rawResult.filter(r => r !== null);
+            if (result.length === 0) throw new Error("Yahoo Finance memblokir IP hostinger.");
         }
         else if (type === 'emas') {
-            // Menarik 3 data sekaligus: Emas (GC=F), Perak (SI=F), dan Kurs USD-IDR (IDR=X)
-            const response = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=GC=F,SI=F,IDR=X`, fetchOptions);
+            // [SOLUSI FINAL] Menggunakan CoinGecko untuk Emas & Perak (PAXG & KAG) - 100% Aman!
+            // 1 Troy Oz = 31.1035 Gram
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,kinesis-silver&vs_currencies=idr&include_24hr_change=true');
             const data = await response.json();
-            const quotes = data.quoteResponse.result;
             
-            const gold = quotes.find(q => q.symbol === 'GC=F');
-            const silver = quotes.find(q => q.symbol === 'SI=F');
-            const usdIdr = quotes.find(q => q.symbol === 'IDR=X').regularMarketPrice;
-
-            // Rumus Akurat: (Harga USD per Troy Ounce * Kurs Rupiah) / 31.1035 Gram
-            const gramPriceGold = (gold.regularMarketPrice * usdIdr) / 31.1035;
-            const gramPriceSilver = (silver.regularMarketPrice * usdIdr) / 31.1035;
+            const gramGold = data['pax-gold'].idr / 31.1035;
+            const gramSilver = data['kinesis-silver'].idr / 31.1035;
 
             result = [
-                { name: 'Emas Global (Per Gram)', symbol: 'XAU/IDR', price: gramPriceGold, change: gold.regularMarketChangePercent },
-                { name: 'Perak / Silver (Per Gram)', symbol: 'XAG/IDR', price: gramPriceSilver, change: silver.regularMarketChangePercent }
+                { name: 'Emas Global (Antam Proxy)', symbol: 'XAU/IDR', price: gramGold, change: data['pax-gold'].idr_24h_change },
+                { name: 'Perak / Silver (Global)', symbol: 'XAG/IDR', price: gramSilver, change: data['kinesis-silver'].idr_24h_change }
             ];
         }
         else if (type === 'kurs') {
