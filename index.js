@@ -326,9 +326,18 @@ app.get('/api/market/:type', async (req, res) => {
         };
         
         if (type === 'crypto') {
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr&order=market_cap_desc&per_page=10&page=1&sparkline=false');
+            // [UPDATE] Kita kunci 10 koin bluechip asli agar terhindar dari koin RWA/glitch
+            const cryptoIds = 'bitcoin,ethereum,tether,binancecoin,solana,ripple,usd-coin,cardano,dogecoin,avalanche-2';
+            
+            const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr&ids=${cryptoIds}&order=market_cap_desc&sparkline=false`, fetchOptions);
             const data = await response.json();
-            result = data.map(c => ({ name: c.name, symbol: c.symbol.toUpperCase(), price: c.current_price, change: c.price_change_percentage_24h }));
+            
+            result = data.map(c => ({ 
+                name: c.name, 
+                symbol: c.symbol.toUpperCase(), 
+                price: c.current_price, 
+                change: c.price_change_percentage_24h 
+            }));
         } 
         else if (type === 'saham') {
             // [BYPASS TINGKAT DEWA] Pindah dari v7/quote ke v8/chart yang tidak di-lock Yahoo
