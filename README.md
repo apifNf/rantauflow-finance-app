@@ -48,7 +48,7 @@ Built as a Progressive Web App (PWA), users can install RantauFlow directly on t
 ### 📤 Export
 
 - CSV Export
-- Financial E-statement Reports
+- E-statement Financial Reports
 
 ### 📱 Progressive Web App
 
